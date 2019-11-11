@@ -260,7 +260,7 @@ class Experiment1ManualController : DeviceState(), ExperimentController {
                     }
                     realTime = 0.0
                 }
-                sleep(100)
+                sleep(1000)
                 realTime += 1
             }
         }.start()
@@ -468,12 +468,12 @@ class Experiment1ManualController : DeviceState(), ExperimentController {
 
             if (cause != "") {
                 appendMessageToLog(String.format("Испытание прервано по причине: %s", cause))
-                experiment1ManualModel!!.result = "Неуспешно"
+                experiment1ManualModel!!.result = "Завершено"
             } else if (!isDevicesResponding) {
                 appendMessageToLog(getNotRespondingDevicesString("Испытание прервано по причине: потеряна связь с устройствами"))
-                experiment1ManualModel!!.result = "Неуспешно"
+                experiment1ManualModel!!.result = "Завершено"
             } else {
-                experiment1ManualModel!!.result = "Успешно"
+                experiment1ManualModel!!.result = "Завершено"
                 appendMessageToLog("Испытание завершено успешно")
             }
             appendMessageToLog("\n------------------------------------------------\n")
@@ -505,15 +505,15 @@ class Experiment1ManualController : DeviceState(), ExperimentController {
         communicationModel.startObject()
         sleep(3000)
         var highestU = measuringU
-        var lowestI = measuringIC
+        var lowestI = measuringIB
         var step = 5
         while ((step-- > 0) && isExperimentRunning && isDevicesResponding) {
             if (measuringU > highestU) {
                 highestU = measuringU
                 step = 5
             }
-            if (measuringIC < lowestI) {
-                lowestI = measuringIC
+            if (measuringIB < lowestI) {
+                lowestI = measuringIB
                 step = 5
             }
             sleep(500)
@@ -523,7 +523,7 @@ class Experiment1ManualController : DeviceState(), ExperimentController {
         communicationModel.changeRotation()
         communicationModel.setObjectParams(25 * 100, 380 * 10, 25 * 100)
         communicationModel.startObject()
-        while (measuringU * 1.05 < highestU && measuringIC * 0.95 > lowestI && isExperimentRunning && isDevicesResponding) { //Из-за инерции
+        while (measuringU < highestU && measuringIB > lowestI && isExperimentRunning && isDevicesResponding) { //Из-за инерции
             if (statusEndsVFD == OMIK_DOWN_END) {
                 setCause("Не удалось подобрать резонанс")
             }
@@ -729,14 +729,13 @@ class Experiment1ManualController : DeviceState(), ExperimentController {
                 OwenPRModel.СТОП_ИСПЫТАНИЯ -> {
                     стопИспытания = value as Boolean
                     if (стопИспытания) {
-                        setCause("Во время испытания была нажата кнопка СТОП")
                         isExperimentRunning = false
                     }
                 }
                 OwenPRModel.ПОДЪЕМ_НАПРЯЖЕНИЯ -> {
                     подъемНапряжения = value as Boolean
                     if (подъемНапряжения && !уменьшениеНапряжения && isManualNeed) {
-                        communicationModel.startUpLATRWithRegulationSpeed(500f, false, 100f, 100f)
+                        communicationModel.startUpLATRWithRegulationSpeed(500f, false, 90f, 60f)
                     }
                     if (!подъемНапряжения && !уменьшениеНапряжения && isManualNeed) {
                         communicationModel.stopLATR()
@@ -745,7 +744,7 @@ class Experiment1ManualController : DeviceState(), ExperimentController {
                 OwenPRModel.УМЕНЬШЕНИЕ_НАПРЯЖЕНИЯ -> {
                     уменьшениеНапряжения = value as Boolean
                     if (уменьшениеНапряжения && !подъемНапряжения && isManualNeed) {
-                        communicationModel.startUpLATRWithRegulationSpeed(1f, false, 100f, 100f)
+                        communicationModel.startUpLATRWithRegulationSpeed(1f, false, 90f, 60f)
                     }
                     if (!уменьшениеНапряжения && !подъемНапряжения && isManualNeed) {
                         communicationModel.stopLATR()

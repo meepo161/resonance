@@ -103,6 +103,9 @@ public class CommunicationModel extends Observable implements Observer {
                         }
                         if (deviceController instanceof OwenPRController) {
                             resetDog();
+                            for (int i = 0; i <= 1; i++) {
+                                deviceController.read(i);
+                            }
                         }
                     }
                     if (isDeviceStateOn) {

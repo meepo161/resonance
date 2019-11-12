@@ -69,8 +69,6 @@ class MainViewController : Statable {
     lateinit var radioViu: RadioButton
     @FXML
     lateinit var radioViuDC: RadioButton
-    @FXML
-    lateinit var radioManualWithPC: RadioButton
 
     @FXML
     lateinit var gridPaneTimeTorque: GridPane
@@ -357,21 +355,6 @@ class MainViewController : Statable {
                     lastTriple.third.text = currentTestItem.speedViuDC[i].toString()
                 }
             }
-            radioManualWithPC.isSelected -> {
-                loadDiagram.isVisible = false
-                scrollPaneTimeTorque.isVisible = false
-                buttonAdd.isVisible = false
-                buttonRemove.isVisible = false
-//                val seriesManual = XYChart.Series<Number, Number>()
-//                seriesManual.data.add(XYChart.Data<Number, Number>(1, 1))
-//                seriesManual.data.add(XYChart.Data<Number, Number>(1, 9))
-//                seriesManual.data.add(XYChart.Data<Number, Number>(4, 9))
-//                seriesManual.data.add(XYChart.Data<Number, Number>(5, 8))
-//                seriesManual.data.add(XYChart.Data<Number, Number>(5, 6))
-//                seriesManual.data.add(XYChart.Data<Number, Number>(4, 5))
-//                seriesManual.data.add(XYChart.Data<Number, Number>(1, 5))
-//                loadDiagram.data.addAll(seriesManual)
-            }
         }
     }
 
@@ -428,9 +411,6 @@ class MainViewController : Statable {
                     }
                     seriesTimesAndVoltage.data.add(XYChart.Data(desperateDot + currentTestItem.voltageViuDC.last() / 2, 0))
                 }
-            }
-            radioManualWithPC.isSelected -> {
-                seriesTimesAndVoltage.data.add(XYChart.Data(0, 0))
             }
         }
         loadDiagram.data.addAll(seriesTimesAndVoltage)
@@ -677,9 +657,6 @@ class MainViewController : Statable {
         }
         if (radioViuDC.isSelected) {
             startExperiment("layouts/experiment3View.fxml")
-        }
-        if (radioManualWithPC.isSelected) {
-            startExperiment("layouts/experiment1ViewManual.fxml")
         }
     }
 

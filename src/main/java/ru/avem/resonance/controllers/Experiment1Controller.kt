@@ -244,7 +244,6 @@ class Experiment1Controller : DeviceState(), ExperimentController {
         tableColumnResultExperiment1.setCellValueFactory { cellData -> cellData.value.resultProperty() }
         fillStackPairs()
         lineChartExperiment1.data.add(seriesTimesAndVoltage)
-
     }
 
     private fun fillStackPairs() {
@@ -497,6 +496,7 @@ class Experiment1Controller : DeviceState(), ExperimentController {
 
             if (isExperimentRunning && isDevicesResponding) {
                 createLoadDiagram()
+                voltageList = currentTestItem.voltageResonance
                 for (i in voltageList.indices) {
                     stackTriples[i].second.isDisable = true
                     timePassed = 0.0
@@ -590,15 +590,12 @@ class Experiment1Controller : DeviceState(), ExperimentController {
     }
 
     private fun fillPointData() {
-        points.add(Point(measuringU.toDouble(), measuringIC.toDouble(), currentProtocol.dayTime))
+        points.add(Point(measuringU.toDouble(), measuringIC.toDouble(), String.format("%s", sdf.format(System.currentTimeMillis()))))
         currentProtocol.points = points
     }
 
     private fun putUpLatr(voltage: Float, difference: Int) {
         communicationModel.startUpLATRUp((voltage / coef).toFloat(), false)
-        while (measuringU < voltage * 0.5 && measuringU < voltage * 1.5 && isExperimentRunning) {
-            sleep(10)
-        }
         waitingLatrCoarse(voltage)
         fineLatr(voltage)
     }

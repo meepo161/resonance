@@ -204,6 +204,7 @@ class Experiment1Controller : DeviceState(), ExperimentController {
 
     private var duty: Float = 0.0f
     private var pulse: Float = 0.0f
+    var size = currentTestItem.voltageResonance.size
 
     private val isThereAreAccidents: Boolean
         get() {
@@ -215,9 +216,9 @@ class Experiment1Controller : DeviceState(), ExperimentController {
         }
 
     private val isDevicesResponding: Boolean
-        //        get() = true
-        get() = isOwenPRResponding && isAvemResponding && isDeltaResponding && isLatrResponding
-                && isParmaResponding && isKiloAvemResponding
+        get() = true
+//        get() = isOwenPRResponding && isAvemResponding && isDeltaResponding && isLatrResponding
+//                && isParmaResponding && isKiloAvemResponding
 
     private val points = ArrayList<Point>()
 
@@ -258,6 +259,7 @@ class Experiment1Controller : DeviceState(), ExperimentController {
     @FXML
     fun handleAddPair() {
         addPair()
+        size++
     }
 
     private fun addPair() {
@@ -267,6 +269,7 @@ class Experiment1Controller : DeviceState(), ExperimentController {
         vBoxVoltage.children.add(lastTriple.second)
         vBoxSpeed.children.add(lastTriple.third)
         anchorPaneTimeTorque.prefHeight += MainViewController.HEIGHT_VBOX
+
     }
 
     @FXML
@@ -274,6 +277,7 @@ class Experiment1Controller : DeviceState(), ExperimentController {
         if (stackTriples.isNotEmpty()) {
             removePair()
             saveTestItemPoints()
+            size--
         } else {
             Toast.makeText("Нет полей для удаления").show(Toast.ToastType.ERROR)
         }
@@ -281,10 +285,12 @@ class Experiment1Controller : DeviceState(), ExperimentController {
 
     private fun removePair() {
         lastTriple = stackTriples.pop()
-        vBoxTime.children.remove(lastTriple.first)
-        vBoxVoltage.children.remove(lastTriple.second)
-        vBoxSpeed.children.remove(lastTriple.third)
-        anchorPaneTimeTorque.prefHeight -= MainViewController.HEIGHT_VBOX
+        Platform.runLater {
+            vBoxTime.children.remove(lastTriple.first)
+            vBoxVoltage.children.remove(lastTriple.second)
+            vBoxSpeed.children.remove(lastTriple.third)
+            anchorPaneTimeTorque.prefHeight -= MainViewController.HEIGHT_VBOX
+        }
     }
 
     private fun newTextFieldsForChart(): Triple<TextField, TextField, TextField> {
@@ -330,7 +336,7 @@ class Experiment1Controller : DeviceState(), ExperimentController {
                 voltages.add(it.second.text.toDouble())
                 speeds.add(it.third.text.toDouble())
             } else {
-                Toast.makeText("Проверьте правильность введенных напряжений и времени проверки").show(Toast.ToastType.WARNING)
+                handleRemovePair()
             }
         }
         currentTestItem.timesResonance = times
@@ -497,8 +503,17 @@ class Experiment1Controller : DeviceState(), ExperimentController {
             if (isExperimentRunning && isDevicesResponding) {
                 createLoadDiagram()
                 voltageList = currentTestItem.voltageResonance
-                for (i in voltageList.indices) {
+                timeList = currentProtocol.timesResonance
+                speedList = currentProtocol.speedResonance
+                var i = 0
+                while (size-- > 0) {
+                    if (currentTestItem.voltageResonance.size == i && (stackTriples[i].first.text.isNullOrEmpty()
+                                    || stackTriples[i].second.text.isNullOrEmpty() || stackTriples[i].third.text.isNullOrEmpty())) {
+                        handleRemovePair()
+                        break
+                    }
                     stackTriples[i].second.isDisable = true
+                    stackTriples[i].third.isDisable = true
                     timePassed = 0.0
                     if (isExperimentRunning && isDevicesResponding) {
                         appendOneMessageToLog("Началась регулировка")
@@ -508,7 +523,6 @@ class Experiment1Controller : DeviceState(), ExperimentController {
                         }
                         appendOneMessageToLog("Регулировка окончена")
                     }
-
                     communicationModel.таймер_On()
                     time = currentTestItem.timesResonance[i]
 
@@ -525,6 +539,7 @@ class Experiment1Controller : DeviceState(), ExperimentController {
                     voltageList = currentTestItem.voltageResonance
                     timeSum += currentTestItem.timesResonance[i]
                     stackTriples[i].first.isDisable = true
+                    i++
                     communicationModel.таймер_Off()
                 }
             }

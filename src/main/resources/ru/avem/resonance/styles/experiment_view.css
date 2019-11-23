@@ -8,14 +8,49 @@
 
 .table-column > .text {
     -fx-font-weight: bold;
-    -fx-font-size: 14;
+    -fx-font-size: 20;
 }
 
 .jfx-text-area {
     -fx-font-weight: bold;
-    -fx-font-size: 14;
- }
+    -fx-font-size: 20;
+}
 
- .default-color0.chart-line-symbol {
-     -fx-background-color: transparent;
- }
+.default-color0.chart-line-symbol {
+    -fx-background-color: transparent;
+}
+
+.table-view .column-header .label {
+    -fx-font-weight: bold;
+    -fx-font-size: 20;
+}
+
+
+.button {
+    -fx-background-color: linear-gradient(#d4d4d4, #e1e1e1);
+    -fx-background-insets: 0, 1, 4, 5;
+    -fx-background-radius: 9, 8, 5, 4;
+    -fx-padding: 15 30 15 30;
+    -fx-font-family: "Helvetica";
+    -fx-font-size: 32px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #333333;
+    -fx-effect: dropshadow(three-pass-box, rgba(255, 255, 255, 0.2), 1, 0.0, 0, 1);
+}
+
+.button.text {
+    -fx-effect: dropshadow(one-pass-box, white, 0, 0.0, 0, 1);
+}
+
+.button:hover {
+    -fx-background-color: linear-gradient(#b9b9b9 0%, #d4d4d4 20%, #afafaf 80%, #c8c8c8 100%),
+    linear-gradient(#f5f5f5 0%, #dbdbdb 50%, #cacaca 51%, #d7d7d7 100%);
+    -fx-background-insets: 0, 1, 4, 5;
+    -fx-background-radius: 9, 8, 5, 4;
+    -fx-padding: 15 30 15 30;
+    -fx-font-family: "Helvetica";
+    -fx-font-size: 32px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #999999;
+    -fx-effect: dropshadow(three-pass-box, rgba(255, 255, 255, 0.2), 1, 0.0, 0, 1);
+}

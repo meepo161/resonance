@@ -7,9 +7,9 @@ import java.nio.ByteBuffer;
 import java.util.Observer;
 
 public class OwenPRController implements DeviceController {
-    public static final short STATES_PROTECTIONS_REGISTER = 513;
+    private static final short STATES_PROTECTIONS_REGISTER = 513;
     public static final short MODE_REGISTER = 514;
-    public static final short STATES_BUTTONS_REGISTER = 515;
+    private static final short STATES_BUTTONS_REGISTER = 515;
     public static final short KMS1_REGISTER = 516;
     public static final short KMS2_REGISTER = 517;
     public static final short RESET_DOG = 512;
@@ -21,10 +21,10 @@ public class OwenPRController implements DeviceController {
     private OwenPRModel model;
     private byte address;
     private ModbusController modbusController;
-    public byte readAttempt = NUMBER_OF_READ_ATTEMPTS;
-    public byte readAttemptOfAttempt = NUMBER_OF_READ_ATTEMPTS_OF_ATTEMPTS;
-    public byte writeAttempt = NUMBER_OF_WRITE_ATTEMPTS;
-    public byte writeAttemptOfAttempt = NUMBER_OF_WRITE_ATTEMPTS_OF_ATTEMPTS;
+    private byte readAttempt = NUMBER_OF_READ_ATTEMPTS;
+    private byte readAttemptOfAttempt = NUMBER_OF_READ_ATTEMPTS_OF_ATTEMPTS;
+    private byte writeAttempt = NUMBER_OF_WRITE_ATTEMPTS;
+    private byte writeAttemptOfAttempt = NUMBER_OF_WRITE_ATTEMPTS_OF_ATTEMPTS;
     private boolean isNeedToRead;
 
     public OwenPRController(int address, Observer observer, ModbusController controller, int id) {
@@ -41,7 +41,7 @@ public class OwenPRController implements DeviceController {
         resetWriteAttemptsOfAttempts();
     }
 
-    public void resetReadAttempts() {
+    private void resetReadAttempts() {
         readAttempt = NUMBER_OF_READ_ATTEMPTS;
     }
 
@@ -49,7 +49,7 @@ public class OwenPRController implements DeviceController {
         readAttemptOfAttempt = NUMBER_OF_READ_ATTEMPTS_OF_ATTEMPTS;
     }
 
-    public void resetWriteAttempts() {
+    private void resetWriteAttempts() {
         writeAttempt = NUMBER_OF_WRITE_ATTEMPTS;
     }
 

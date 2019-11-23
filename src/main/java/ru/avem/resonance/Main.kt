@@ -39,12 +39,9 @@ class Main : Application(), Exitappable {
 
     override fun start(primaryStage: Stage) {
         PRIMARY_STAGE = primaryStage
-
         showMainView()
-
         PRIMARY_STAGE.initStyle(StageStyle.TRANSPARENT)
         PRIMARY_STAGE.show()
-
     }
 
     @Throws(Exception::class)
@@ -117,7 +114,7 @@ class Main : Application(), Exitappable {
 
         @JvmStatic
         fun main(args: Array<String>) {
-            Application.launch(Main::class.java)
+            launch(Main::class.java)
         }
     }
 }

@@ -27,10 +27,10 @@ public abstract class AbstractExperiment extends DeviceState implements Experime
     @FXML
     protected JFXButton buttonNext;
     @FXML
-    protected JFXTextArea textAreaExperimentProcessLog;
+    private JFXTextArea textAreaExperimentProcessLog;
 
     protected CommunicationModel communicationModel = CommunicationModel.getInstance();
-    protected ExperimentValuesModel experimentsValuesModel = ExperimentValuesModel.getInstance();
+    private ExperimentValuesModel experimentsValuesModel = ExperimentValuesModel.getInstance();
     protected Protocol currentProtocol = experimentsValuesModel.getCurrentProtocol();
 
     private String logBuffer;
@@ -38,8 +38,8 @@ public abstract class AbstractExperiment extends DeviceState implements Experime
     private Stage dialogStage;
     private boolean isCanceled;
 
-    protected volatile boolean isExperimentRunning;
-    protected volatile boolean isExperimentEnded = true;
+    private volatile boolean isExperimentRunning;
+    private volatile boolean isExperimentEnded = true;
     protected volatile boolean isNeedToRefresh = true;
 
     protected volatile boolean isOwenPRResponding;
@@ -48,7 +48,7 @@ public abstract class AbstractExperiment extends DeviceState implements Experime
     protected volatile boolean isAvemResponding;
     protected volatile boolean isLatrResponding;
 
-    protected volatile String cause;
+    private volatile String cause;
 
 
     @FXML

@@ -7,9 +7,9 @@ import java.nio.ByteBuffer;
 import java.util.Observer;
 
 public class DeltaCP2000Controller implements DeviceController {
-    public static final short ERRORS_REGISTER = 0x2100;
+    private static final short ERRORS_REGISTER = 0x2100;
     public static final short STATUS_REGISTER = 0x2101;
-    public static final short ENDS_STATUS_REGISTER = 0x041A;
+    private static final short ENDS_STATUS_REGISTER = 0x041A;
     public static final short END_UP_CONTROL_REGISTER = 0x0405;
     public static final short END_DOWN_CONTROL_REGISTER = 0x0406;
     public static final short CURRENT_FREQUENCY_INPUT_REGISTER = 0x2103;
@@ -29,10 +29,10 @@ public class DeltaCP2000Controller implements DeviceController {
     private DeltaCP2000Model model;
     private byte address;
     private ModbusController modbusController;
-    public byte readAttempt = NUMBER_OF_READ_ATTEMPTS;
-    public byte readAttemptOfAttempt = NUMBER_OF_READ_ATTEMPTS_OF_ATTEMPTS;
-    public byte writeAttempt = NUMBER_OF_WRITE_ATTEMPTS;
-    public byte writeAttemptOfAttempt = NUMBER_OF_WRITE_ATTEMPTS_OF_ATTEMPTS;
+    private byte readAttempt = NUMBER_OF_READ_ATTEMPTS;
+    private byte readAttemptOfAttempt = NUMBER_OF_READ_ATTEMPTS_OF_ATTEMPTS;
+    private byte writeAttempt = NUMBER_OF_WRITE_ATTEMPTS;
+    private byte writeAttemptOfAttempt = NUMBER_OF_WRITE_ATTEMPTS_OF_ATTEMPTS;
     private boolean isNeedToRead;
 
     public DeltaCP2000Controller(int address, Observer observer, ModbusController controller, int deviceID) {
@@ -49,7 +49,7 @@ public class DeltaCP2000Controller implements DeviceController {
         resetWriteAttemptsOfAttempts();
     }
 
-    public void resetReadAttempts() {
+    private void resetReadAttempts() {
         readAttempt = NUMBER_OF_READ_ATTEMPTS;
     }
 
@@ -57,7 +57,7 @@ public class DeltaCP2000Controller implements DeviceController {
         readAttemptOfAttempt = NUMBER_OF_READ_ATTEMPTS_OF_ATTEMPTS;
     }
 
-    public void resetWriteAttempts() {
+    private void resetWriteAttempts() {
         writeAttempt = NUMBER_OF_WRITE_ATTEMPTS;
     }
 

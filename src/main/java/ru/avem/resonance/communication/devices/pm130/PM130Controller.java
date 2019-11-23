@@ -27,10 +27,10 @@ public class PM130Controller implements DeviceController {
 
     private PM130Model model;
     private ModbusController modbusController;
-    public byte readAttempt = NUMBER_OF_READ_ATTEMPTS;
-    public byte readAttemptOfAttempt = NUMBER_OF_READ_ATTEMPTS_OF_ATTEMPTS;
-    public byte writeAttempt = NUMBER_OF_WRITE_ATTEMPTS;
-    public byte writeAttemptOfAttempt = NUMBER_OF_WRITE_ATTEMPTS_OF_ATTEMPTS;
+    private byte readAttempt = NUMBER_OF_READ_ATTEMPTS;
+    private byte readAttemptOfAttempt = NUMBER_OF_READ_ATTEMPTS_OF_ATTEMPTS;
+    private byte writeAttempt = NUMBER_OF_WRITE_ATTEMPTS;
+    private byte writeAttemptOfAttempt = NUMBER_OF_WRITE_ATTEMPTS_OF_ATTEMPTS;
     private boolean isNeedToRead;
     private byte address;
 
@@ -49,7 +49,7 @@ public class PM130Controller implements DeviceController {
     }
 
 
-    public void resetReadAttempts() {
+    private void resetReadAttempts() {
         readAttempt = NUMBER_OF_READ_ATTEMPTS;
     }
 
@@ -57,7 +57,7 @@ public class PM130Controller implements DeviceController {
         readAttemptOfAttempt = NUMBER_OF_READ_ATTEMPTS_OF_ATTEMPTS;
     }
 
-    public void resetWriteAttempts() {
+    private void resetWriteAttempts() {
         writeAttempt = NUMBER_OF_WRITE_ATTEMPTS;
     }
 

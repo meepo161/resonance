@@ -36,11 +36,11 @@ public class AvemVoltmeterModel extends Observable {
         notice(RESPONDING_PARAM, readResponding && writeResponding);
     }
 
-    public void setUAMP(float u) {
+    void setUAMP(float u) {
         notice(U_AMP_PARAM, u);
     }
 
-    public void setURMS(float u) {
+    void setURMS(float u) {
         notice(U_RMS_PARAM, u);
     }
 

@@ -7,9 +7,9 @@ import java.nio.ByteBuffer;
 import java.util.Observer;
 
 public class LatrController implements DeviceController {
-    public static final short U_RMS_REGISTER = 2;
+    private static final short U_RMS_REGISTER = 2;
 
-    public static final short ENDS_STATUS_REGISTER = 140;
+    private static final short ENDS_STATUS_REGISTER = 140;
     public static final short VALUE_REGISTER = 141;
     public static final short MIN_DUTTY_REGISTER = 142;
     public static final short MAX_DUTTY_REGISTER = 143;
@@ -29,15 +29,15 @@ public class LatrController implements DeviceController {
 
 
     private static final int NUM_OF_WORDS_IN_REGISTER = 1;
-    private static final short NUM_OF_REGISTERS = 1 * NUM_OF_WORDS_IN_REGISTER;
+    private static final short NUM_OF_REGISTERS = NUM_OF_WORDS_IN_REGISTER;
 
     private LatrModel model;
     private byte address;
     private ModbusController modbusController;
-    public byte readAttempt = NUMBER_OF_READ_ATTEMPTS;
-    public byte readAttemptOfAttempt = NUMBER_OF_READ_ATTEMPTS_OF_ATTEMPTS;
-    public byte writeAttempt = NUMBER_OF_WRITE_ATTEMPTS;
-    public byte writeAttemptOfAttempt = NUMBER_OF_WRITE_ATTEMPTS_OF_ATTEMPTS;
+    private byte readAttempt = NUMBER_OF_READ_ATTEMPTS;
+    private byte readAttemptOfAttempt = NUMBER_OF_READ_ATTEMPTS_OF_ATTEMPTS;
+    private byte writeAttempt = NUMBER_OF_WRITE_ATTEMPTS;
+    private byte writeAttemptOfAttempt = NUMBER_OF_WRITE_ATTEMPTS_OF_ATTEMPTS;
     private boolean isNeedToRead;
 
     public LatrController(int address, Observer observer, ModbusController controller, int id) {
@@ -54,7 +54,7 @@ public class LatrController implements DeviceController {
         resetWriteAttemptsOfAttempts();
     }
 
-    public void resetReadAttempts() {
+    private void resetReadAttempts() {
         readAttempt = NUMBER_OF_READ_ATTEMPTS;
     }
 
@@ -62,7 +62,7 @@ public class LatrController implements DeviceController {
         readAttemptOfAttempt = NUMBER_OF_READ_ATTEMPTS_OF_ATTEMPTS;
     }
 
-    public void resetWriteAttempts() {
+    private void resetWriteAttempts() {
         writeAttempt = NUMBER_OF_WRITE_ATTEMPTS;
     }
 

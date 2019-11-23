@@ -5,9 +5,9 @@ import java.util.Observer;
 
 public class DeltaCP2000Model extends Observable {
     public static final int RESPONDING_PARAM = 0;
-    public static final int ERROR1_PARAM = 1;
-    public static final int ERROR2_PARAM = 2;
-    public static final int CURRENT_FREQUENCY_PARAM = 3;
+    private static final int ERROR1_PARAM = 1;
+    private static final int ERROR2_PARAM = 2;
+    private static final int CURRENT_FREQUENCY_PARAM = 3;
     public static final int ENDS_STATUS_PARAM = 4;
     public static final int STATUS_VFD = 5;
 

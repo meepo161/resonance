@@ -5,7 +5,7 @@ import java.util.Observer;
 
 public class OwenPRModel extends Observable {
     public static final int RESPONDING_PARAM = 0;
-    public static final int РУЧНОЙ_РЕЖИМ = 1;
+    private static final int РУЧНОЙ_РЕЖИМ = 1;
     public static final int РУЧНОЙ_РЕЖИМ_С_ПК = 2;
     public static final int ПЕРЕМЕННОЕ = 3;
     public static final int ПЕРЕМЕННОЕ_С_РЕЗОНАНСОМ = 4;
@@ -22,7 +22,7 @@ public class OwenPRModel extends Observable {
     public static final int СТОП_ИСПЫТАНИЯ = 14;
     public static final int ПОДЪЕМ_НАПРЯЖЕНИЯ = 15;
     public static final int УМЕНЬШЕНИЕ_НАПРЯЖЕНИЯ = 16;
-    public static final int УМЕНЬШЕНИЕ_НАПРЯЖЕНИЯ_ОТЖАТ = 17;
+    private static final int УМЕНЬШЕНИЕ_НАПРЯЖЕНИЯ_ОТЖАТ = 17;
 
     private int deviceID;
     private boolean readResponding;
@@ -48,7 +48,7 @@ public class OwenPRModel extends Observable {
         setResponding();
     }
 
-    void setResponding() {
+    private void setResponding() {
         notice(RESPONDING_PARAM, readResponding && writeResponding);
     }
 

@@ -14,7 +14,6 @@ import javafx.scene.paint.Color
 import javafx.stage.Stage
 import ru.avem.resonance.Constants
 import ru.avem.resonance.Constants.Ends.*
-import ru.avem.resonance.Constants.Time.MILLS_IN_SEC
 import ru.avem.resonance.Constants.Vfd.VFD_FORWARD
 import ru.avem.resonance.Constants.Vfd.VFD_REVERSE
 import ru.avem.resonance.Main
@@ -65,8 +64,6 @@ class Experiment3Controller : DeviceState(), ExperimentController {
     @FXML
     lateinit var buttonNext: Button
     @FXML
-    lateinit var buttonCancelAll: Button
-    @FXML
     lateinit var root: AnchorPane
     @FXML
     lateinit var gridPaneTimeTorque: GridPane
@@ -107,10 +104,6 @@ class Experiment3Controller : DeviceState(), ExperimentController {
     @Volatile
     private var isDeltaResponding: Boolean = false
     @Volatile
-    private var isDeltaReady50: Boolean = false
-    @Volatile
-    private var isDeltaReady0: Boolean = false
-    @Volatile
     private var isParmaResponding: Boolean = false
     @Volatile
     private var isLatrResponding: Boolean = false
@@ -130,19 +123,11 @@ class Experiment3Controller : DeviceState(), ExperimentController {
     @Volatile
     private var measuringULatr: Float = 0.0f
     @Volatile
-    private var measuringIAvem: Float = 0.0f
-    @Volatile
-    private var measuringIA: Float = 0.0f
-    @Volatile
     private var measuringIB: Float = 0.0f
     @Volatile
     private var measuringIC: Float = 0.0f
     @Volatile
     private var isSchemeReady: Boolean = false
-    @Volatile
-    private var isStartButtonOn: Boolean = false
-    @Volatile
-    private var measuringF: Float = 0.0f
     @Volatile
     private var isControlRubilNeed: Boolean = false
 
@@ -158,8 +143,6 @@ class Experiment3Controller : DeviceState(), ExperimentController {
     private var контрольПуска: Boolean = false
     @Volatile
     private var контрольРубильника: Boolean = false
-    @Volatile
-    private var ручнойРежим: Boolean = false
     @Volatile
     private var ручнойРежимСПК: Boolean = false
     @Volatile
@@ -188,9 +171,6 @@ class Experiment3Controller : DeviceState(), ExperimentController {
     private var voltageList: ArrayList<Double> = ArrayList()
     private var timeList: ArrayList<Double> = ArrayList()
     private var speedList: ArrayList<Double> = ArrayList()
-    private var currentDot = XYChart.Series<Number, Number>()
-
-    private val firstVoltage = 1500.0f
 
     private var currentTestItem: TestItem = mainModel.currentTestItem
     private var timePassed = 0.0
@@ -199,22 +179,9 @@ class Experiment3Controller : DeviceState(), ExperimentController {
     private var seriesTimesAndVoltage = XYChart.Series<Number, Number>()
     private var realTime = 0.0
 
-    private var r: Random = Random()
-
-    private var duty: Float = 0.0f
-    private var pulse: Float = 0.0f
-
-    private val isThereAreAccidents: Boolean
-        get() {
-            if (isCanceled) {
-                isExperimentRunning = false
-                isExperimentEnded = true
-            }
-            return !isCanceled
-        }
+    var size = currentTestItem.voltageViuDC.size
 
     private val isDevicesResponding: Boolean
-        //        get() = true
         get() = isOwenPRResponding && isAvemResponding && isDeltaResponding && isLatrResponding
                 && isParmaResponding && isKiloAvemResponding
 
@@ -243,7 +210,9 @@ class Experiment3Controller : DeviceState(), ExperimentController {
         tableColumnResultExperiment3.setCellValueFactory { cellData -> cellData.value.resultProperty() }
         fillStackPairs()
         lineChartExperiment3.data.add(seriesTimesAndVoltage)
-
+        Platform.runLater {
+            buttonStartStop.style = "-fx-background-color: linear-gradient(#55d43d, #8ce17d);"
+        }
     }
 
     private fun fillStackPairs() {
@@ -258,6 +227,7 @@ class Experiment3Controller : DeviceState(), ExperimentController {
     @FXML
     fun handleAddPair() {
         addPair()
+        size++
     }
 
     private fun addPair() {
@@ -274,6 +244,7 @@ class Experiment3Controller : DeviceState(), ExperimentController {
         if (stackTriples.isNotEmpty()) {
             removePair()
             saveTestItemPoints()
+            size--
         } else {
             Toast.makeText("Нет полей для удаления").show(Toast.ToastType.ERROR)
         }
@@ -281,10 +252,12 @@ class Experiment3Controller : DeviceState(), ExperimentController {
 
     private fun removePair() {
         lastTriple = stackTriples.pop()
-        vBoxTime.children.remove(lastTriple.first)
-        vBoxVoltage.children.remove(lastTriple.second)
-        vBoxSpeed.children.remove(lastTriple.third)
-        anchorPaneTimeTorque.prefHeight -= MainViewController.HEIGHT_VBOX
+        Platform.runLater {
+            vBoxTime.children.remove(lastTriple.first)
+            vBoxVoltage.children.remove(lastTriple.second)
+            vBoxSpeed.children.remove(lastTriple.third)
+            anchorPaneTimeTorque.prefHeight -= MainViewController.HEIGHT_VBOX
+        }
     }
 
     private fun newTextFieldsForChart(): Triple<TextField, TextField, TextField> {
@@ -330,7 +303,7 @@ class Experiment3Controller : DeviceState(), ExperimentController {
                 voltages.add(it.second.text.toDouble())
                 speeds.add(it.third.text.toDouble())
             } else {
-                Toast.makeText("Проверьте правильность введенных напряжений и времени проверки").show(Toast.ToastType.WARNING)
+                handleRemovePair()
             }
         }
         currentTestItem.timesViuDC = times
@@ -385,13 +358,6 @@ class Experiment3Controller : DeviceState(), ExperimentController {
         }
     }
 
-    @FXML
-    private fun handleExperimentCancel() {
-        fillProtocolExperimentFields()
-        isExperimentRunning = false
-        dialogStage!!.close()
-    }
-
     private fun stopExperiment() {
         isNeedToRefresh = false
         buttonStartStop.isDisable = true
@@ -407,9 +373,11 @@ class Experiment3Controller : DeviceState(), ExperimentController {
         isNeedCheckLatrStatus = false
         isExperimentRunning = true
         isExperimentEnded = false
-        buttonStartStop.text = "Остановить"
+        Platform.runLater {
+            buttonStartStop.text = "Остановить"
+            buttonStartStop.style = "-fx-background-color: linear-gradient(#ff6f8c, #FF6F61);"
+        }
         buttonNext.isDisable = true
-        buttonCancelAll.isDisable = true
         experiment3Model!!.clearProperties()
         isSchemeReady = false
         cause = ""
@@ -487,24 +455,33 @@ class Experiment3Controller : DeviceState(), ExperimentController {
             if (isExperimentRunning && isDevicesResponding) {
                 createLoadDiagram()
                 voltageList = currentTestItem.voltageViuDC
-                for (i in voltageList.indices) {
+                timeList = currentProtocol.timesViuDC
+                speedList = currentProtocol.speedViuDC
+                var i = 0
+                while (size-- > 0) {
+                    if (currentTestItem.voltageViuDC.size == i && (stackTriples[i].first.text.isNullOrEmpty()
+                                    || stackTriples[i].second.text.isNullOrEmpty() || stackTriples[i].third.text.isNullOrEmpty())) {
+                        handleRemovePair()
+                        break
+                    }
                     stackTriples[i].second.isDisable = true
+                    stackTriples[i].third.isDisable = true
                     timePassed = 0.0
                     if (isExperimentRunning && isDevicesResponding) {
                         appendOneMessageToLog("Началась регулировка")
-                        putUpLatr(voltageList[i].toFloat() * 1000, 150)
+                        putUpLatr(voltageList[i].toFloat() * 1000)
                         if (measuringULatr < measuringU * 0.5 && measuringULatr * 0.5 > measuringU) {
                             setCause("Коэфицент трансформации сильно отличается")
                         }
                         appendOneMessageToLog("Регулировка окончена")
                     }
-
                     communicationModel.таймер_On()
+
                     time = currentTestItem.timesViuDC[i]
                     while (isExperimentRunning && timePassed < time) {
                         time = currentTestItem.timesViuDC[i]
                         sleep(1000)
-                        timePassed += 1
+                        timePassed += 1.0
                         if (time != stackTriples[i].second.text.toDouble()) {
                             time = currentTestItem.timesViuDC[i]
                         }
@@ -514,12 +491,14 @@ class Experiment3Controller : DeviceState(), ExperimentController {
                     voltageList = currentTestItem.voltageViuDC
                     timeSum += currentTestItem.timesViuDC[i]
                     stackTriples[i].first.isDisable = true
+                    i++
                     communicationModel.таймер_Off()
                 }
             }
 
             isNeedToRefresh = false
-            communicationModel.resetLATR()
+            communicationModel.startUpLATRUp(0f, true)
+
             while (measuringU > 1300) {
                 sleep(10)
             }
@@ -546,18 +525,13 @@ class Experiment3Controller : DeviceState(), ExperimentController {
                 communicationModel.внимание_Off()
             }
 
-            timeToSleep = 200
-            while (isExperimentRunning && (timeToSleep-- > 0)) {
-                sleep(10)
-            }
-
             communicationModel.finalizeAllDevices()
 
             if (cause != "") {
                 appendMessageToLog(String.format("Испытание прервано по причине: %s", cause))
                 experiment3Model!!.result = "Завершено"
             } else if (!isDevicesResponding) {
-                appendMessageToLog(getNotRespondingDevicesString("Испытание прервано по причине: потеряна связь с устройствами"))
+                appendMessageToLog(getNotRespondingDevicesString())
                 experiment3Model!!.result = "Завершено"
             } else {
                 experiment3Model!!.result = "Завершено"
@@ -568,11 +542,11 @@ class Experiment3Controller : DeviceState(), ExperimentController {
             Platform.runLater()
             {
                 buttonStartStop.text = "Запустить"
+                buttonStartStop.style = "-fx-background-color: linear-gradient(#55d43d, #8ce17d);"
                 isExperimentEnded = true
                 isExperimentRunning = false
                 buttonStartStop.isDisable = false
                 buttonNext.isDisable = false
-                buttonCancelAll.isDisable = false
             }
         }.start()
     }
@@ -582,65 +556,10 @@ class Experiment3Controller : DeviceState(), ExperimentController {
         currentProtocol.points = points
     }
 
-    private fun putUpLatr(voltage: Float, difference: Int) {
+    private fun putUpLatr(voltage: Float) {
         communicationModel.startUpLATRUp((voltage / coef).toFloat(), false)
         waitingLatrCoarse(voltage)
         fineLatr(voltage)
-    }
-
-    private fun selectDutyAndPulseForLatr(i: Int) {
-        if (currentTestItem.speedViuDC[i] < 0.4) {
-            duty = 25.0f
-            pulse = 50.0f
-        } else if (currentTestItem.speedViuDC[i] >= 0.4 && currentTestItem.speedViuDC[i] < 0.5) {
-            duty = 25.0f
-            pulse = 56.0f
-        } else if (currentTestItem.speedViuDC[i] >= 0.5 && currentTestItem.speedViuDC[i] < 0.6) {
-            duty = 25.0f
-            pulse = 64.0f
-        } else if (currentTestItem.speedViuDC[i] >= 0.6 && currentTestItem.speedViuDC[i] < 0.7) {
-            duty = 25.0f
-            pulse = 70.0f
-        } else if (currentTestItem.speedViuDC[i] >= 0.7 && currentTestItem.speedViuDC[i] < 0.8) {
-            duty = 25.0f
-            pulse = 74.0f
-        } else if (currentTestItem.speedViuDC[i] >= 0.8 && currentTestItem.speedViuDC[i] < 0.9) {
-            duty = 25.0f
-            pulse = 79.0f
-        } else if (currentTestItem.speedViuDC[i] >= 0.9 && currentTestItem.speedViuDC[i] < 1.0) {
-            duty = 25.0f
-            pulse = 85.0f
-        } else if (currentTestItem.speedViuDC[i] >= 1.0 && currentTestItem.speedViuDC[i] < 1.1) {
-            duty = 25.0f
-            pulse = 89.0f
-        } else if (currentTestItem.speedViuDC[i] >= 1.1 && currentTestItem.speedViuDC[i] < 1.2) {
-            duty = 25.0f
-            pulse = 94.0f
-        } else if (currentTestItem.speedViuDC[i] >= 1.2 && currentTestItem.speedViuDC[i] < 1.3) {
-            duty = 28.0f
-            pulse = 86.0f
-        } else if (currentTestItem.speedViuDC[i] >= 1.3 && currentTestItem.speedViuDC[i] < 1.4) {
-            duty = 28.0f
-            pulse = 88.0f
-        } else if (currentTestItem.speedViuDC[i] >= 1.4 && currentTestItem.speedViuDC[i] < 1.5) {
-            duty = 28.0f
-            pulse = 90.0f
-        } else if (currentTestItem.speedViuDC[i] >= 1.5 && currentTestItem.speedViuDC[i] < 1.6) {
-            duty = 28.0f
-            pulse = 92.0f
-        } else if (currentTestItem.speedViuDC[i] >= 1.6 && currentTestItem.speedViuDC[i] < 1.7) {
-            duty = 28.0f
-            pulse = 95.0f
-        } else if (currentTestItem.speedViuDC[i] >= 1.7 && currentTestItem.speedViuDC[i] < 1.8) {
-            duty = 32.0f
-            pulse = 90.0f
-        } else if (currentTestItem.speedViuDC[i] >= 1.8 && currentTestItem.speedViuDC[i] < 1.9) {
-            duty = 33.0f
-            pulse = 91.0f
-        } else if (currentTestItem.speedViuDC[i] <= 2.0) {
-            duty = 34.0f
-            pulse = 91.0f
-        }
     }
 
     private fun waitingLatrCoarse(voltage: Float) {
@@ -729,19 +648,9 @@ class Experiment3Controller : DeviceState(), ExperimentController {
         }
     }
 
-    private fun getAccidentsString(mainText: String): String {
-        return String.format("%s: %s",
-                mainText,
-//                if (is1DoorOn) "" else "открыта дверь, ",
-//                if (is2OIOn) "" else "открыты концевики ОИ, ",
-//                if (is6KM1_2_On) "" else "не замкнулся КМ1, ",
-//                if (is7KM2_2_On) "" else "не замкнулся КМ2, ",
-                if (isCanceled) "" else "нажата кнопка отмены, ")
-    }
-
-    private fun getNotRespondingDevicesString(mainText: String): String {
+    private fun getNotRespondingDevicesString(): String {
         return String.format("%s %s%s%s%s%s%s",
-                mainText,
+                "Испытание прервано по причине: потеряна связь с устройствами",
                 if (isOwenPRResponding) "" else "Овен ПР ",
                 if (isParmaResponding) "" else "Парма ",
                 if (isDeltaResponding) "" else "Дельта ",
@@ -758,7 +667,7 @@ class Experiment3Controller : DeviceState(), ExperimentController {
     }
 
     override fun update(o: Observable, values: Any) {
-        val modelId = (values as Array<Any>)[0] as Int
+        val modelId = (values as Array<*>)[0] as Int
         val param = values[1] as Int
         val value = values[2]
 
@@ -848,8 +757,8 @@ class Experiment3Controller : DeviceState(), ExperimentController {
                 }
                 PM130Model.I2_PARAM -> {
                     measuringIB = value as Float * 20
-                    val IB = String.format("%.2f", measuringIB)
-                    experiment3Model!!.currentB = IB
+                    val iC = String.format("%.2f", measuringIB)
+                    experiment3Model!!.currentB = iC
                     if (measuringIB > 45) {
                         appendMessageToLog("Ток B превышает 45А")
                     }
@@ -883,8 +792,8 @@ class Experiment3Controller : DeviceState(), ExperimentController {
                 }
                 AvemVoltmeterModel.U_RMS_PARAM -> {
                     measuringIC = value as Float
-                    val IC = String.format("%.4f", measuringIC)
-                    experiment3Model!!.currentOI = IC
+                    val iC = String.format("%.4f", measuringIC)
+                    experiment3Model!!.currentOI = iC
                     if (measuringIC > 45) {
                         appendMessageToLog("Ток C превышает 45А")
                     }

@@ -3,106 +3,151 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Circle?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="root" stylesheets="@../styles/main_css.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ru.avem.resonance.controllers.DeviceStateWindowController">
+<AnchorPane fx:id="root" stylesheets="@../styles/main_css.css" xmlns="http://javafx.com/javafx/8.0.171"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="ru.avem.resonance.controllers.DeviceStateWindowController">
     <children>
-      <GridPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-         <columnConstraints>
-            <ColumnConstraints hgrow="SOMETIMES" />
-            <ColumnConstraints hgrow="SOMETIMES" />
-         </columnConstraints>
-         <rowConstraints>
-            <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-         </rowConstraints>
-         <children>
-            <AnchorPane GridPane.columnIndex="1">
-               <children>
-                  <VBox alignment="TOP_CENTER" spacing="16.0">
-                     <children>
-                        <HBox alignment="CENTER_LEFT" spacing="16.0">
-                           <children>
-                                <Label style="-fx-font-weight: bold;" text="Состояние устройств" />
-                           </children>
-                        </HBox>
-                        <HBox alignment="CENTER_LEFT" spacing="16.0">
-                           <children>
-                                <Circle fx:id="deviceStateCirclePM130" fill="DODGERBLUE" radius="14.0" stroke="BLACK" strokeType="INSIDE" />
-                                <Label text="PM130" />
-                           </children>
-                        </HBox>
-                        <HBox alignment="CENTER_LEFT" spacing="16.0">
-                           <children>
-                                <Circle fx:id="deviceStateCircleAvem" fill="DODGERBLUE" radius="14.0" stroke="BLACK" strokeType="INSIDE" />
-                                <Label text="АВЭМ" />
-                           </children>
-                        </HBox>
-                        <HBox alignment="CENTER_LEFT" spacing="16.0">
-                           <children>
-                                <Circle fx:id="deviceStateCirclePR200" fill="DODGERBLUE" radius="14.0" stroke="BLACK" strokeType="INSIDE" />
-                                <Label text="ПР-200  " />
-                           </children>
-                        </HBox>
-                        <HBox alignment="CENTER_LEFT" spacing="16.0">
-                           <children>
-                                <Circle fx:id="deviceStateCircleDelta" fill="DODGERBLUE" radius="14.0" stroke="BLACK" strokeType="INSIDE" />
-                                <Label text="Дельта" />
-                           </children>
-                        </HBox>
-                        <HBox alignment="CENTER_LEFT" spacing="16.0">
-                           <children>
-                                <Circle fx:id="deviceStateCircleLatr" fill="DODGERBLUE" radius="14.0" stroke="BLACK" strokeType="INSIDE" />
-                                <Label text="ЛАТР" />
-                           </children>
-                        </HBox>
-                        <HBox alignment="CENTER_LEFT" layoutX="26.0" layoutY="235.0" spacing="16.0">
-                           <children>
-                              <Circle fx:id="deviceStateCircleKiloAvem" fill="DODGERBLUE" radius="14.0" stroke="BLACK" strokeType="INSIDE" />
-                              <Label text="Кило АВЭМ" />
-                           </children>
-                        </HBox>
-                     </children>
-                     <padding>
-                        <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
-                     </padding>
-                  </VBox>
-               </children>
-            </AnchorPane>
-            <AnchorPane>
-               <GridPane.margin>
-                  <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
-               </GridPane.margin>
-               <children>
-                  <VBox alignment="BOTTOM_RIGHT" spacing="16.0" AnchorPane.bottomAnchor="0.0">
-                     <children>
-                        <HBox alignment="CENTER_LEFT" spacing="16.0">
-                           <children>
-                                <Circle fill="DODGERBLUE" radius="14.0" stroke="BLACK" strokeType="INSIDE" />
-                                <Label text="Неизвестно" />
-                           </children>
-                        </HBox>
-                        <HBox alignment="CENTER_LEFT" spacing="16.0">
-                           <children>
-                                <Circle fill="RED" radius="14.0" stroke="BLACK" strokeType="INSIDE" />
-                                <Label text="Не отвечает" />
-                           </children>
-                        </HBox>
-                        <HBox alignment="CENTER_LEFT" spacing="16.0">
-                           <children>
-                                <Circle fill="LIME" radius="14.0" stroke="BLACK" strokeType="INSIDE" />
-                                <Label text="Отвечает" />
-                           </children>
-                        </HBox>
-                     </children>
-                  </VBox>
-               </children>
-            </AnchorPane>
-         </children>
-      </GridPane>
+        <VBox spacing="16.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+              AnchorPane.topAnchor="0.0">
+            <children>
+                <HBox alignment="CENTER" spacing="16.0">
+                    <children>
+                        <Label style="-fx-font-size: 30;" text="Состояние устройств">
+                            <font>
+                                <Font name="Book Antiqua" size="40.0"/>
+                            </font>
+                        </Label>
+                    </children>
+                    <padding>
+                        <Insets bottom="16.0" left="16.0" right="16.0" top="16.0"/>
+                    </padding>
+                </HBox>
+                <HBox spacing="16.0">
+                    <children>
+                        <VBox alignment="BOTTOM_RIGHT" spacing="16.0">
+                            <children>
+                                <HBox alignment="CENTER_LEFT" spacing="16.0">
+                                    <children>
+                                        <Circle fill="DODGERBLUE" radius="14.0" stroke="BLACK" strokeType="INSIDE"/>
+                                        <Label text="Неизвестно">
+                                            <font>
+                                                <Font name="Book Antiqua" size="23.0"/>
+                                            </font>
+                                        </Label>
+                                    </children>
+                                </HBox>
+                                <HBox alignment="CENTER_LEFT" spacing="16.0">
+                                    <children>
+                                        <Circle fill="RED" radius="14.0" stroke="BLACK" strokeType="INSIDE"/>
+                                        <Label text="Не отвечает">
+                                            <font>
+                                                <Font name="Book Antiqua" size="23.0"/>
+                                            </font>
+                                        </Label>
+                                    </children>
+                                </HBox>
+                                <HBox alignment="CENTER_LEFT" spacing="16.0">
+                                    <children>
+                                        <Circle fill="LIME" radius="14.0" stroke="BLACK" strokeType="INSIDE"/>
+                                        <Label text="Отвечает">
+                                            <font>
+                                                <Font name="Book Antiqua" size="23.0"/>
+                                            </font>
+                                        </Label>
+                                    </children>
+                                </HBox>
+                            </children>
+                            <padding>
+                                <Insets bottom="16.0" left="16.0" right="16.0" top="16.0"/>
+                            </padding>
+                        </VBox>
+                        <VBox alignment="TOP_CENTER" spacing="16.0">
+                            <children>
+                                <HBox alignment="CENTER_LEFT" spacing="16.0">
+                                    <children>
+                                        <Circle fx:id="deviceStateCirclePM130" fill="DODGERBLUE" radius="14.0"
+                                                stroke="BLACK" strokeType="INSIDE"/>
+                                        <Label text="PM130">
+                                            <font>
+                                                <Font name="Book Antiqua" size="23.0"/>
+                                            </font>
+                                        </Label>
+                                    </children>
+                                </HBox>
+                                <HBox alignment="CENTER_LEFT" spacing="16.0">
+                                    <children>
+                                        <Circle fx:id="deviceStateCircleAvem" fill="DODGERBLUE" radius="14.0"
+                                                stroke="BLACK" strokeType="INSIDE"/>
+                                        <Label text="АВЭМ">
+                                            <font>
+                                                <Font name="Book Antiqua" size="23.0"/>
+                                            </font>
+                                        </Label>
+                                    </children>
+                                </HBox>
+                                <HBox alignment="CENTER_LEFT" spacing="16.0">
+                                    <children>
+                                        <Circle fx:id="deviceStateCirclePR200" fill="DODGERBLUE" radius="14.0"
+                                                stroke="BLACK" strokeType="INSIDE"/>
+                                        <Label text="ПР-200">
+                                            <font>
+                                                <Font name="Book Antiqua" size="23.0"/>
+                                            </font>
+                                        </Label>
+                                    </children>
+                                </HBox>
+                                <HBox alignment="CENTER_LEFT" spacing="16.0">
+                                    <children>
+                                        <Circle fx:id="deviceStateCircleDelta" fill="DODGERBLUE" radius="14.0"
+                                                stroke="BLACK" strokeType="INSIDE"/>
+                                        <Label text="Дельта">
+                                            <font>
+                                                <Font name="Book Antiqua" size="23.0"/>
+                                            </font>
+                                        </Label>
+                                    </children>
+                                </HBox>
+                                <HBox alignment="CENTER_LEFT" spacing="16.0">
+                                    <children>
+                                        <Circle fx:id="deviceStateCircleLatr" fill="DODGERBLUE" radius="14.0"
+                                                stroke="BLACK" strokeType="INSIDE"/>
+                                        <Label text="ЛАТР">
+                                            <font>
+                                                <Font name="Book Antiqua" size="23.0"/>
+                                            </font>
+                                        </Label>
+                                    </children>
+                                </HBox>
+                                <HBox alignment="CENTER_LEFT" layoutX="26.0" layoutY="235.0" spacing="16.0">
+                                    <children>
+                                        <Circle fx:id="deviceStateCircleKiloAvem" fill="DODGERBLUE" radius="14.0"
+                                                stroke="BLACK" strokeType="INSIDE"/>
+                                        <Label text="Кило АВЭМ">
+                                            <font>
+                                                <Font name="Book Antiqua" size="23.0"/>
+                                            </font>
+                                        </Label>
+                                    </children>
+                                </HBox>
+                            </children>
+                            <padding>
+                                <Insets bottom="16.0" left="16.0" right="16.0" top="16.0"/>
+                            </padding>
+                        </VBox>
+                    </children>
+                    <padding>
+                        <Insets bottom="16.0" left="16.0" right="16.0" top="16.0"/>
+                    </padding>
+                </HBox>
+            </children>
+            <padding>
+                <Insets bottom="16.0" left="16.0" right="16.0" top="16.0"/>
+            </padding>
+        </VBox>
     </children>
 </AnchorPane>

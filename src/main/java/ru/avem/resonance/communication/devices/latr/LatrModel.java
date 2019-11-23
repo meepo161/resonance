@@ -6,7 +6,7 @@ import java.util.Observer;
 public class LatrModel extends Observable {
     public static final int RESPONDING_PARAM = 0;
     public static final int STATUS_PARAM = 1;
-    public static final int ENDS_STATUS_PARAM = 2;
+    private static final int ENDS_STATUS_PARAM = 2;
     public static final int U_PARAM = 3;
     private int deviceID;
     private boolean readResponding;
@@ -44,7 +44,7 @@ public class LatrModel extends Observable {
         notice(ENDS_STATUS_PARAM, endsStatus);
     }
 
-    public void setU(float u) {
+    void setU(float u) {
         notice(U_PARAM, u);
     }
 

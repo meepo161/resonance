@@ -12,15 +12,15 @@ public class AvemVoltmeterController implements DeviceController {
     public static final short CHANGE_SHOW_VALUE = 108;
 
     private static final int NUM_OF_WORDS_IN_REGISTER = 1;
-    private static final short NUM_OF_REGISTERS = 1 * NUM_OF_WORDS_IN_REGISTER;
+    private static final short NUM_OF_REGISTERS = NUM_OF_WORDS_IN_REGISTER;
 
     private AvemVoltmeterModel model;
     private byte address;
     private ModbusController modbusController;
-    public byte readAttempt = NUMBER_OF_READ_ATTEMPTS;
-    public byte readAttemptOfAttempt = NUMBER_OF_READ_ATTEMPTS_OF_ATTEMPTS;
-    public byte writeAttempt = NUMBER_OF_WRITE_ATTEMPTS;
-    public byte writeAttemptOfAttempt = NUMBER_OF_WRITE_ATTEMPTS_OF_ATTEMPTS;
+    private byte readAttempt = NUMBER_OF_READ_ATTEMPTS;
+    private byte readAttemptOfAttempt = NUMBER_OF_READ_ATTEMPTS_OF_ATTEMPTS;
+    private byte writeAttempt = NUMBER_OF_WRITE_ATTEMPTS;
+    private byte writeAttemptOfAttempt = NUMBER_OF_WRITE_ATTEMPTS_OF_ATTEMPTS;
     private boolean isNeedToRead;
 
     public AvemVoltmeterController(int address, Observer observer, ModbusController controller, int deviceID) {
@@ -37,7 +37,7 @@ public class AvemVoltmeterController implements DeviceController {
         resetWriteAttemptsOfAttempts();
     }
 
-    public void resetReadAttempts() {
+    private void resetReadAttempts() {
         readAttempt = NUMBER_OF_READ_ATTEMPTS;
     }
 
@@ -45,7 +45,7 @@ public class AvemVoltmeterController implements DeviceController {
         readAttemptOfAttempt = NUMBER_OF_READ_ATTEMPTS_OF_ATTEMPTS;
     }
 
-    public void resetWriteAttempts() {
+    private void resetWriteAttempts() {
         writeAttempt = NUMBER_OF_WRITE_ATTEMPTS;
     }
 

@@ -6,16 +6,16 @@ import java.util.Observer;
 
 public class PM130Model extends Observable {
     public static final int RESPONDING_PARAM = 0;
-    public static final int V1_PARAM = 1;
-    public static final int V2_PARAM = 2;
-    public static final int V3_PARAM = 3;
-    public static final int I1_PARAM = 4;
+    private static final int V1_PARAM = 1;
+    private static final int V2_PARAM = 2;
+    private static final int V3_PARAM = 3;
+    private static final int I1_PARAM = 4;
     public static final int I2_PARAM = 5;
     public static final int I3_PARAM = 6;
-    public static final int P_PARAM = 7;
-    public static final int S_PARAM = 8;
-    public static final int COS_PARAM = 9;
-    public static final int F_PARAM = 10;
+    private static final int P_PARAM = 7;
+    private static final int S_PARAM = 8;
+    private static final int COS_PARAM = 9;
+    private static final int F_PARAM = 10;
 
     private int deviceID;
     private boolean readResponding;
@@ -33,11 +33,6 @@ public class PM130Model extends Observable {
 
     void setReadResponding(boolean readResponding) {
         this.readResponding = readResponding;
-        setResponding();
-    }
-
-    void setWriteResponding(boolean writeResponding) {
-        this.writeResponding = writeResponding;
         setResponding();
     }
 

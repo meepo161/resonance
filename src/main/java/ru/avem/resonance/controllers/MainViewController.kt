@@ -1,6 +1,5 @@
 package ru.avem.resonance.controllers
 
-import com.j256.ormlite.logger.LoggerFactory
 import javafx.application.Platform
 import javafx.collections.FXCollections
 import javafx.fxml.FXML
@@ -16,6 +15,7 @@ import javafx.scene.layout.VBox
 import javafx.stage.FileChooser
 import javafx.stage.Modality
 import javafx.stage.Stage
+import javafx.stage.StageStyle
 import ru.avem.resonance.Constants
 import ru.avem.resonance.Exitappable
 import ru.avem.resonance.Main
@@ -56,12 +56,6 @@ class MainViewController : Statable {
     lateinit var editTestItem: MenuItem
     @FXML
     lateinit var root: AnchorPane
-    @FXML
-    lateinit var tabPane: TabPane
-    @FXML
-    lateinit var tabProtocol: Tab
-    @FXML
-    lateinit var tabResults: Tab
 
     @FXML
     lateinit var radioResonance: RadioButton
@@ -88,12 +82,6 @@ class MainViewController : Statable {
     lateinit var textFieldSerialNumber: TextField
     @FXML
     lateinit var loadDiagram: LineChart<Number, Number>
-    @FXML
-    lateinit var tableViewResults: TableView<ResultModel>
-    @FXML
-    lateinit var columnTableDimension: TableColumn<ResultModel, String>
-    @FXML
-    lateinit var columnTableValue: TableColumn<ResultModel, String>
     @FXML
     lateinit var checkMenuItemTheme: CheckMenuItem
 
@@ -123,7 +111,6 @@ class MainViewController : Statable {
 
     companion object {
         const val HEIGHT_VBOX: Int = 57
-        private val logger = LoggerFactory.getLogger(MainViewController::class.java)
     }
 
     @FXML
@@ -152,7 +139,6 @@ class MainViewController : Statable {
 
     private fun toInitIdleState() {
         menuBarProtocolSaveAs.isDisable = true
-        tabResults.isDisable = true
         buttonProtocolCancel.isDisable = true
     }
 
@@ -163,10 +149,8 @@ class MainViewController : Statable {
         comboBoxTestItem.isDisable = false
         buttonProtocolCancel.text = "Очистить"
         buttonProtocolNext.text = "Создать"
-        tabPane.selectionModel.select(tabProtocol)
         mainModel.currentProtocol = Protocol()
         buttonProtocolCancel.isDisable = false
-        tabResults.isDisable = true
         currentState = idleState
         initData()
         radioResonance.isSelected = true
@@ -183,8 +167,6 @@ class MainViewController : Statable {
     }
 
     override fun toResultState() {
-        tabResults.isDisable = false
-        tabPane.selectionModel.select(tabResults)
         val currentProtocol = mainModel.currentProtocol
         currentProtocol.millis = System.currentTimeMillis()
         ProtocolRepository.insertProtocol(currentProtocol)
@@ -201,9 +183,6 @@ class MainViewController : Statable {
         comboBoxTestItem.items.setAll(allTestItems)
         comboBoxTestItem.selectionModel.clearSelection()
         comboBoxTestItem.selectionModel.selectFirst()
-        tableViewResults.items = resultData
-        columnTableDimension.setCellValueFactory { cellData -> cellData.value.dimensionProperty() }
-        columnTableValue.setCellValueFactory { cellData -> cellData.value.valueProperty() }
         resultData.clear()
         handleSelectTestItemExperiment()
     }
@@ -589,7 +568,6 @@ class MainViewController : Statable {
         val loader = FXMLLoader()
         loader.location = Main::class.java.getResource("layouts/deviceStateWindow.fxml")
         val page = loader.load<Parent>()
-        val controller: DeviceStateWindowController = loader.getController()
 
         val dialogStage = Stage()
         dialogStage.title = "Состояние устройств"
@@ -673,6 +651,7 @@ class MainViewController : Statable {
             dialogStage.initOwner(PRIMARY_STAGE)
             val scene = Scene(page, Constants.Display.WIDTH.toDouble(), Constants.Display.HEIGHT.toDouble())
             dialogStage.scene = scene
+            dialogStage.initStyle(StageStyle.TRANSPARENT);
             controller = loader.getController<ExperimentController>()
             controller!!.setDialogStage(dialogStage)
 
@@ -691,12 +670,6 @@ class MainViewController : Statable {
 
     fun setMain(exitappable: Exitappable) {
         this.exitappable = exitappable
-    }
-
-    @FXML
-    fun handleSaveCurrentProtocol() {
-        ProtocolRepository.insertProtocol(mainModel.currentProtocol)
-        Toast.makeText("Результаты проведенных испытаний сохранены").show(Toast.ToastType.INFORMATION)
     }
 
     @FXML

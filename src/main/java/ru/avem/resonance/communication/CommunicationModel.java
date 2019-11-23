@@ -34,12 +34,12 @@ public class CommunicationModel extends Observable implements Observer {
 
     private Connection RS485Connection;
 
-    public OwenPRController owenPRController;
-    public AvemVoltmeterController avemVoltmeterController;
-    public AvemVoltmeterController avemKiloVoltmeterController;
-    public PM130Controller pm130Controller;
-    public DeltaCP2000Controller deltaCP2000Controller;
-    public LatrController latrController;
+    private OwenPRController owenPRController;
+    private AvemVoltmeterController avemVoltmeterController;
+    private AvemVoltmeterController avemKiloVoltmeterController;
+    private PM130Controller pm130Controller;
+    private DeltaCP2000Controller deltaCP2000Controller;
+    private LatrController latrController;
 
     private int kms1;
     private int kms2;
@@ -49,7 +49,7 @@ public class CommunicationModel extends Observable implements Observer {
 
     private volatile boolean isDeviceStateOn;
 
-    public List<DeviceController> devicesControllers = new ArrayList<>();
+    private List<DeviceController> devicesControllers = new ArrayList<>();
 
     private CommunicationModel() {
 
@@ -147,20 +147,6 @@ public class CommunicationModel extends Observable implements Observer {
         latrController.setNeedToRead(isNeed);
     }
 
-    public void setNeedToReadForDebug(boolean isNeed) {
-        owenPRController.setNeedToRead(isNeed);
-        deltaCP2000Controller.setNeedToRead(isNeed);
-    }
-
-    public void resetAllDevices() {
-        owenPRController.resetAllAttempts();
-        avemVoltmeterController.resetAllAttempts();
-        avemKiloVoltmeterController.resetAllAttempts();
-        deltaCP2000Controller.resetAllAttempts();
-        pm130Controller.resetAllAttempts();
-        latrController.resetAllAttempts();
-    }
-
     private void connectMainBus() {
         RS485Connection = new SerialConnection(
                 Constants.Communication.RS485_DEVICE_NAME,
@@ -188,7 +174,7 @@ public class CommunicationModel extends Observable implements Observer {
         owenPRController.write(RESET_DOG, 1, 1);
     }
 
-    public void resetResPR200() {
+    private void resetResPR200() {
         owenPRController.write(RES, 1, 1);
     }
 
@@ -200,13 +186,6 @@ public class CommunicationModel extends Observable implements Observer {
         writeToKms2Register(kms2);
     }
 
-    public void onAllKms() {
-        kms1 = 1;
-        writeToKms1Register(kms1);
-        kms2 = 1;
-        writeToKms2Register(kms2);
-    }
-
     private void writeToKms1Register(int value) {
         owenPRController.write(KMS1_REGISTER, 1, value);
     }
@@ -215,7 +194,7 @@ public class CommunicationModel extends Observable implements Observer {
         owenPRController.write(KMS2_REGISTER, 1, value);
     }
 
-    public void onRegisterInTheKms(int numberOfRegister, int kms) {
+    private void onRegisterInTheKms(int numberOfRegister, int kms) {
         int mask = (int) Math.pow(2, --numberOfRegister);
         try {
             int kmsField = CommunicationModel.class.getDeclaredField("kms" + kms).getInt(this);
@@ -228,7 +207,7 @@ public class CommunicationModel extends Observable implements Observer {
         Logger.withTag("DEBUG_TAG").log("1=" + kms1 + " 2=" + kms2);
     }
 
-    public void offRegisterInTheKms(int numberOfRegister, int kms) {
+    private void offRegisterInTheKms(int numberOfRegister, int kms) {
         int mask = ~(int) Math.pow(2, --numberOfRegister);
         try {
             int kmsField = CommunicationModel.class.getDeclaredField("kms" + kms).getInt(this);
@@ -273,19 +252,6 @@ public class CommunicationModel extends Observable implements Observer {
         deltaCP2000Controller.write(POINT_2_FREQUENCY_REGISTER, 1, 50);
     }
 
-    public void setEndsVFDParams(int paramEndUp, int paramEndDown) {
-        deltaCP2000Controller.write(END_UP_CONTROL_REGISTER, 1, paramEndUp);
-        deltaCP2000Controller.write(END_DOWN_CONTROL_REGISTER, 1, paramEndDown);
-    }
-
-    public void setObjectFCur(int fCur) {
-        deltaCP2000Controller.write(CURRENT_FREQUENCY_OUTPUT_REGISTER, 1, fCur);
-    }
-
-    public void setObjectUMax(int voltageMax) {
-        deltaCP2000Controller.write(POINT_1_VOLTAGE_REGISTER, 1, voltageMax);
-    }
-
     public void resetLATR() {
         latrController.write(START_STOP_REGISTER, 0x5A5A5A5A);
     }
@@ -295,12 +261,8 @@ public class CommunicationModel extends Observable implements Observer {
         if (isNeedReset) {
             latrController.write(START_STOP_REGISTER, 0x5A5A5A5A);
         }
-        int minDutty = 400;
-        int maxDutty = 200;
         float corridor = 0.05f;
         float delta = 0.05f;
-        int timeMinPulse = 50;
-        int timeMaxPulse = 300;
         float timeMinPulsePercent = 20.0f;
         float timeMaxPulsePercent = 22.0f;
         float minDuttyPercent = 24.0f;
@@ -310,10 +272,6 @@ public class CommunicationModel extends Observable implements Observer {
         float minVoltage = 400f;
         Logger.withTag("REGULATION").log("voltage=" + voltage);
         latrController.write(VALUE_REGISTER, voltage);
-//        latrController.write(TIME_MIN_PULSE_REGISTER, timeMinPulse);
-//        latrController.write(TIME_MAX_PULSE_REGISTER, timeMaxPulse);
-//        latrController.write(MIN_DUTTY_REGISTER, minDutty);
-//        latrController.write(MAX_DUTTY_REGISTER, maxDutty);
         latrController.write(IR_TIME_PERIOD_MIN, timeMinPulsePercent);
         latrController.write(IR_TIME_PERIOD_MAX, timeMaxPulsePercent);
         latrController.write(IR_TIME_PULSE_MIN_PERCENT, timeMinPeriod);
@@ -332,12 +290,8 @@ public class CommunicationModel extends Observable implements Observer {
         if (isNeedReset) {
             latrController.write(START_STOP_REGISTER, 0x5A5A5A5A);
         }
-        int minDutty = 400;
-        int maxDutty = 200;
         float corridor = 0.05f;
         float delta = 0.05f;
-        int timeMinPulse = 50;
-        int timeMaxPulse = 300;
         float timeMinPulsePercent = 40.0f;
         float timeMaxPulsePercent = 50.0f;
         float minDuttyPercent = 34.0f;
@@ -347,10 +301,6 @@ public class CommunicationModel extends Observable implements Observer {
         float minVoltage = 400f;
         Logger.withTag("REGULATION").log("voltage=" + voltage);
         latrController.write(VALUE_REGISTER, voltage);
-//        latrController.write(TIME_MIN_PULSE_REGISTER, timeMinPulse);
-//        latrController.write(TIME_MAX_PULSE_REGISTER, timeMaxPulse);
-//        latrController.write(MIN_DUTTY_REGISTER, minDutty);
-//        latrController.write(MAX_DUTTY_REGISTER, maxDutty);
         latrController.write(IR_TIME_PERIOD_MIN, timeMinPulsePercent);
         latrController.write(IR_TIME_PERIOD_MAX, timeMaxPulsePercent);
         latrController.write(IR_TIME_PULSE_MIN_PERCENT, timeMinPeriod);
@@ -369,12 +319,8 @@ public class CommunicationModel extends Observable implements Observer {
         if (isNeedReset) {
             latrController.write(START_STOP_REGISTER, 0x5A5A5A5A);
         }
-        int minDutty = 400;
-        int maxDutty = 200;
         float corridor = 0.01f;
         float delta = 0.002f;
-        int timeMinPulse = 50;
-        int timeMaxPulse = 300;
         float timeMinPulsePercent = 25.0f;
         float timeMaxPulsePercent = 25.0f;
         float minDuttyPercent = 50.0f;
@@ -384,10 +330,6 @@ public class CommunicationModel extends Observable implements Observer {
         float minVoltage = 400f;
         Logger.withTag("REGULATION").log("voltage=" + voltage);
         latrController.write(VALUE_REGISTER, voltage);
-//        latrController.write(TIME_MIN_PULSE_REGISTER, timeMinPulse);
-//        latrController.write(TIME_MAX_PULSE_REGISTER, timeMaxPulse);
-//        latrController.write(MIN_DUTTY_REGISTER, minDutty);
-//        latrController.write(MAX_DUTTY_REGISTER, maxDutty);
         latrController.write(IR_TIME_PERIOD_MIN, timeMinPulsePercent);
         latrController.write(IR_TIME_PERIOD_MAX, timeMaxPulsePercent);
         latrController.write(IR_TIME_PULSE_MIN_PERCENT, timeMinPeriod);
@@ -427,11 +369,6 @@ public class CommunicationModel extends Observable implements Observer {
         latrController.write(START_STOP_REGISTER, 1);
     }
 
-
-    public void startLATR() {
-        latrController.write(START_STOP_REGISTER, 1);
-    }
-
     public void stopLATR() {
         latrController.write(START_STOP_REGISTER, 0);
     }
@@ -453,11 +390,6 @@ public class CommunicationModel extends Observable implements Observer {
         latrController.resetAllAttempts();
         deltaCP2000Controller.setNeedToRead(true);
         deltaCP2000Controller.resetAllAttempts();
-    }
-
-    public void initLatrOnly() {
-        latrController.setNeedToRead(true);
-        latrController.resetAllAttempts();
     }
 
     public void разрешениеНаЗапуск_On() {

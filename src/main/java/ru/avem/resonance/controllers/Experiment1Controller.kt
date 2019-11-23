@@ -32,6 +32,7 @@ import ru.avem.resonance.model.MainModel
 import ru.avem.resonance.model.Point
 import ru.avem.resonance.utils.Toast
 import ru.avem.resonance.utils.Utils.sleep
+import java.lang.Math.abs
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
@@ -41,6 +42,8 @@ class Experiment1Controller : DeviceState(), ExperimentController {
     @FXML
     lateinit var tableViewExperiment1: TableView<Experiment1Model>
     @FXML
+    lateinit var tableViewExperiment11: TableView<Experiment1Model>
+    @FXML
     lateinit var tableColumnU: TableColumn<Experiment1Model, String>
     @FXML
     lateinit var tableColumnIB: TableColumn<Experiment1Model, String>
@@ -48,6 +51,14 @@ class Experiment1Controller : DeviceState(), ExperimentController {
     lateinit var tableColumnUOI: TableColumn<Experiment1Model, String>
     @FXML
     lateinit var tableColumnIOI: TableColumn<Experiment1Model, String>
+    @FXML
+    lateinit var tableColumnF: TableColumn<Experiment1Model, String>
+    @FXML
+    lateinit var tableColumnCoefAMP: TableColumn<Experiment1Model, String>
+    @FXML
+    lateinit var tableColumnI1: TableColumn<Experiment1Model, String>
+    @FXML
+    lateinit var tableColumnTime: TableColumn<Experiment1Model, String>
     @FXML
     lateinit var tableColumnResultExperiment1: TableColumn<Experiment1Model, String>
     @FXML
@@ -120,16 +131,26 @@ class Experiment1Controller : DeviceState(), ExperimentController {
     @Volatile
     private var measuringU: Float = 0.0f
     @Volatile
+    private var measuringUAMP: Float = 0.0f
+    @Volatile
+    private var measuringURMS: Float = 0.0f
+    @Volatile
     private var measuringULatr: Float = 0.0f
+    @Volatile
+    private var measuringIA: Float = 0.0f
     @Volatile
     private var measuringIB: Float = 0.0f
     @Volatile
     private var measuringIC: Float = 0.0f
+
+
+    private var measuringUAMPMinute: Float = 0f
+    private var measuringURMSMinute: Float = 0f
+
     @Volatile
     private var isSchemeReady: Boolean = false
     @Volatile
     private var isControlRubilNeed: Boolean = false
-
     @Volatile
     private var ткзДоТрансформатора: Boolean = false
     @Volatile
@@ -198,6 +219,8 @@ class Experiment1Controller : DeviceState(), ExperimentController {
         experiment1Data.add(experiment1Model)
         tableViewExperiment1.items = experiment1Data
         tableViewExperiment1.selectionModel = null
+        tableViewExperiment11.items = experiment1Data
+        tableViewExperiment11.selectionModel = null
         communicationModel.addObserver(this)
         voltageList = currentProtocol.voltageResonance
         timeList = currentProtocol.timesResonance
@@ -206,6 +229,9 @@ class Experiment1Controller : DeviceState(), ExperimentController {
         tableColumnIB.setCellValueFactory { cellData -> cellData.value.currentBProperty() }
         tableColumnUOI.setCellValueFactory { cellData -> cellData.value.voltageProperty() }
         tableColumnIOI.setCellValueFactory { cellData -> cellData.value.currentOIProperty() }
+        tableColumnF.setCellValueFactory { cellData -> cellData.value.frequencyProperty() }
+        tableColumnCoefAMP.setCellValueFactory { cellData -> cellData.value.coefAmpProperty() }
+        tableColumnI1.setCellValueFactory { cellData -> cellData.value.currentAProperty() }
         tableColumnResultExperiment1.setCellValueFactory { cellData -> cellData.value.resultProperty() }
         fillStackPairs()
         lineChartExperiment1.data.add(seriesTimesAndVoltage)
@@ -342,7 +368,7 @@ class Experiment1Controller : DeviceState(), ExperimentController {
 
     private fun fillProtocolExperimentFields() {
         val currentProtocol = mainModel.currentProtocol
-        currentProtocol.typeExperiment = "ВИУ резонансное переменным напряжением"
+        currentProtocol.typeExperiment = "ВИУ переменным напряжением до 43кВ"
     }
 
     @FXML
@@ -479,12 +505,24 @@ class Experiment1Controller : DeviceState(), ExperimentController {
 
                     appendOneMessageToLog("Начался отсчет времени")
                     time = currentTestItem.timesResonance[i]
+                    var timeForCoef = 0
                     while (isExperimentRunning && timePassed < time) {
                         time = currentTestItem.timesResonance[i]
                         sleep(1000)
                         timePassed += 1.0
+                        experiment1Model!!.time = timePassed.toString()
                         if (time != stackTriples[i].second.text.toDouble()) {
                             time = currentTestItem.timesResonance[i]
+                        }
+                        measuringUAMPMinute += measuringUAMP
+                        measuringURMSMinute += measuringURMS
+                        timeForCoef += 1
+                        if (timeForCoef >= 15) {
+                            val coefAmp = String.format("%.4f", measuringUAMPMinute / measuringURMSMinute)
+                            experiment1Model!!.coefAmp = coefAmp
+                            measuringUAMPMinute = 0f
+                            measuringURMSMinute = 0f
+                            timeForCoef = 0
                         }
                     }
                     fillPointData()
@@ -794,6 +832,11 @@ class Experiment1Controller : DeviceState(), ExperimentController {
                     isParmaResponding = value as Boolean
                     Platform.runLater { deviceStateCirclePM130.fill = if (value) Color.LIME else Color.RED }
                 }
+                PM130Model.I1_PARAM -> {
+                    measuringIA = value as Float * 20
+                    val iA = String.format("%.2f", measuringIA)
+                    experiment1Model!!.currentA = iA
+                }
                 PM130Model.I2_PARAM -> {
                     measuringIB = value as Float * 20
                     val iB = String.format("%.2f", measuringIB)
@@ -845,10 +888,19 @@ class Experiment1Controller : DeviceState(), ExperimentController {
                     Platform.runLater { deviceStateCircleKiloAvem.fill = if (value) Color.LIME else Color.RED }
                 }
                 AvemVoltmeterModel.U_RMS_PARAM -> {
-                    measuringU = (value as Float) * 1000
+                    measuringURMS = (value as Float) * 1000
+                    measuringU = value * 1000
                     coef = (measuringU / (measuringULatr / 140)).toDouble()
                     val kiloAvemU = String.format("%.2f", measuringU)
                     experiment1Model!!.voltage = kiloAvemU
+                }
+                AvemVoltmeterModel.U_AMP_PARAM -> {
+                    measuringUAMP = abs((value as Float) * 1000)
+                }
+                AvemVoltmeterModel.F_PARAM -> {
+                    val measuringF = (value as Float)
+                    val kiloAvemF = String.format("%.2f", measuringF)
+                    experiment1Model!!.frequency = kiloAvemF
                 }
             }
 

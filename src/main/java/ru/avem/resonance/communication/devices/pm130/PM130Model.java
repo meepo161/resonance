@@ -9,7 +9,7 @@ public class PM130Model extends Observable {
     private static final int V1_PARAM = 1;
     private static final int V2_PARAM = 2;
     private static final int V3_PARAM = 3;
-    private static final int I1_PARAM = 4;
+    public static final int I1_PARAM = 4;
     public static final int I2_PARAM = 5;
     public static final int I3_PARAM = 6;
     private static final int P_PARAM = 7;

@@ -9,18 +9,19 @@ import java.util.Observer;
 public class AvemVoltmeterController implements DeviceController {
     private static final short U_AMP_REGISTER = 0;
     private static final short U_RMS_REGISTER = 2;
+    private static final short F_REGISTER = 3;
     public static final short CHANGE_SHOW_VALUE = 108;
 
     private static final int NUM_OF_WORDS_IN_REGISTER = 1;
-    private static final short NUM_OF_REGISTERS = NUM_OF_WORDS_IN_REGISTER;
+    private static final short NUM_OF_REGISTERS = 1 * NUM_OF_WORDS_IN_REGISTER;
 
     private AvemVoltmeterModel model;
     private byte address;
     private ModbusController modbusController;
-    private byte readAttempt = NUMBER_OF_READ_ATTEMPTS;
-    private byte readAttemptOfAttempt = NUMBER_OF_READ_ATTEMPTS_OF_ATTEMPTS;
-    private byte writeAttempt = NUMBER_OF_WRITE_ATTEMPTS;
-    private byte writeAttemptOfAttempt = NUMBER_OF_WRITE_ATTEMPTS_OF_ATTEMPTS;
+    public byte readAttempt = NUMBER_OF_READ_ATTEMPTS;
+    public byte readAttemptOfAttempt = NUMBER_OF_READ_ATTEMPTS_OF_ATTEMPTS;
+    public byte writeAttempt = NUMBER_OF_WRITE_ATTEMPTS;
+    public byte writeAttemptOfAttempt = NUMBER_OF_WRITE_ATTEMPTS_OF_ATTEMPTS;
     private boolean isNeedToRead;
 
     public AvemVoltmeterController(int address, Observer observer, ModbusController controller, int deviceID) {
@@ -37,7 +38,7 @@ public class AvemVoltmeterController implements DeviceController {
         resetWriteAttemptsOfAttempts();
     }
 
-    private void resetReadAttempts() {
+    public void resetReadAttempts() {
         readAttempt = NUMBER_OF_READ_ATTEMPTS;
     }
 
@@ -45,7 +46,7 @@ public class AvemVoltmeterController implements DeviceController {
         readAttemptOfAttempt = NUMBER_OF_READ_ATTEMPTS_OF_ATTEMPTS;
     }
 
-    private void resetWriteAttempts() {
+    public void resetWriteAttempts() {
         writeAttempt = NUMBER_OF_WRITE_ATTEMPTS;
     }
 
@@ -69,6 +70,14 @@ public class AvemVoltmeterController implements DeviceController {
                     break;
                 case 1:
                     if (!getURMS().equals(ModbusController.RequestStatus.FRAME_RECEIVED)) {
+                        read(args);
+                    } else {
+                        resetReadAttempts();
+                        resetReadAttemptsOfAttempts();
+                    }
+                    break;
+                case 2:
+                    if (!getF().equals(ModbusController.RequestStatus.FRAME_RECEIVED)) {
                         read(args);
                     } else {
                         resetReadAttempts();
@@ -130,6 +139,23 @@ public class AvemVoltmeterController implements DeviceController {
             }
         }
         return statusURMS;
+    }
+
+    private ModbusController.RequestStatus getF() {
+        ByteBuffer inputBuffer = ByteBuffer.allocate(INPUT_BUFFER_SIZE);
+        ModbusController.RequestStatus statusFreq = modbusController.readInputRegisters(
+                address, F_REGISTER, NUM_OF_REGISTERS, inputBuffer);
+        if (statusFreq.equals(ModbusController.RequestStatus.FRAME_RECEIVED)) {
+            model.setReadResponding(true);
+            try {
+                model.setReadResponding(true);
+                resetReadAttempts();
+                resetReadAttemptsOfAttempts();
+                model.setFreq(inputBuffer.getFloat());
+            } catch (Exception ignored) {
+            }
+        }
+        return statusFreq;
     }
 
     @Override

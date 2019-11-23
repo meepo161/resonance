@@ -32,6 +32,7 @@ import ru.avem.resonance.model.MainModel
 import ru.avem.resonance.model.Point
 import ru.avem.resonance.utils.Toast
 import ru.avem.resonance.utils.Utils.sleep
+import java.lang.Math.abs
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
@@ -41,6 +42,8 @@ class Experiment2Controller : DeviceState(), ExperimentController {
     @FXML
     lateinit var tableViewExperiment2: TableView<Experiment2Model>
     @FXML
+    lateinit var tableViewExperiment22: TableView<Experiment2Model>
+    @FXML
     lateinit var tableColumnU: TableColumn<Experiment2Model, String>
     @FXML
     lateinit var tableColumnIB: TableColumn<Experiment2Model, String>
@@ -48,6 +51,14 @@ class Experiment2Controller : DeviceState(), ExperimentController {
     lateinit var tableColumnUOI: TableColumn<Experiment2Model, String>
     @FXML
     lateinit var tableColumnIOI: TableColumn<Experiment2Model, String>
+    @FXML
+    lateinit var tableColumnF: TableColumn<Experiment2Model, String>
+    @FXML
+    lateinit var tableColumnCoefAMP: TableColumn<Experiment2Model, String>
+    @FXML
+    lateinit var tableColumnI1: TableColumn<Experiment2Model, String>
+    @FXML
+    lateinit var tableColumnTime: TableColumn<Experiment2Model, String>
     @FXML
     lateinit var tableColumnResultExperiment2: TableColumn<Experiment2Model, String>
     @FXML
@@ -120,16 +131,26 @@ class Experiment2Controller : DeviceState(), ExperimentController {
     @Volatile
     private var measuringU: Float = 0.0f
     @Volatile
+    private var measuringUAMP: Float = 0.0f
+    @Volatile
+    private var measuringURMS: Float = 0.0f
+    @Volatile
     private var measuringULatr: Float = 0.0f
+    @Volatile
+    private var measuringIA: Float = 0.0f
     @Volatile
     private var measuringIB: Float = 0.0f
     @Volatile
     private var measuringIC: Float = 0.0f
+
+
+    private var measuringUAMPMinute: Float = 0f
+    private var measuringURMSMinute: Float = 0f
+
     @Volatile
     private var isSchemeReady: Boolean = false
     @Volatile
     private var isControlRubilNeed: Boolean = false
-
     @Volatile
     private var ткзДоТрансформатора: Boolean = false
     @Volatile
@@ -198,6 +219,8 @@ class Experiment2Controller : DeviceState(), ExperimentController {
         experiment2Data.add(experiment2Model)
         tableViewExperiment2.items = experiment2Data
         tableViewExperiment2.selectionModel = null
+        tableViewExperiment22.items = experiment2Data
+        tableViewExperiment22.selectionModel = null
         communicationModel.addObserver(this)
         voltageList = currentProtocol.voltageViu
         timeList = currentProtocol.timesViu
@@ -206,6 +229,9 @@ class Experiment2Controller : DeviceState(), ExperimentController {
         tableColumnIB.setCellValueFactory { cellData -> cellData.value.currentBProperty() }
         tableColumnUOI.setCellValueFactory { cellData -> cellData.value.voltageProperty() }
         tableColumnIOI.setCellValueFactory { cellData -> cellData.value.currentOIProperty() }
+        tableColumnF.setCellValueFactory { cellData -> cellData.value.frequencyProperty() }
+        tableColumnCoefAMP.setCellValueFactory { cellData -> cellData.value.coefAmpProperty() }
+        tableColumnI1.setCellValueFactory { cellData -> cellData.value.currentAProperty() }
         tableColumnResultExperiment2.setCellValueFactory { cellData -> cellData.value.resultProperty() }
         fillStackPairs()
         lineChartExperiment2.data.add(seriesTimesAndVoltage)
@@ -342,7 +368,7 @@ class Experiment2Controller : DeviceState(), ExperimentController {
 
     private fun fillProtocolExperimentFields() {
         val currentProtocol = mainModel.currentProtocol
-        currentProtocol.typeExperiment = "ВИУ переменным напряжением"
+        currentProtocol.typeExperiment = "ВИУ переменным напряжением до 60кВ"
     }
 
     @FXML
@@ -436,12 +462,16 @@ class Experiment2Controller : DeviceState(), ExperimentController {
                 communicationModel.короткозамыкатель_On()
             }
 
-
-            if (isExperimentRunning && isDevicesResponding) {
-                communicationModel.приемКоманды_On()
+            if (isExperimentRunning) {
                 appendOneMessageToLog("Поднимаем напряжение на объекте испытания для поиска резонанса")
-                communicationModel.resetLATR()
-                putUpLatr(1100f)
+                communicationModel.startUpLATRUp((1100f / coef).toFloat(), false)
+                waitingLatrCoarse(1100f)
+                if (measuringULatr < measuringU * 0.5 && measuringULatr * 0.5 > measuringU) {
+                    setCause("Коэфицент трансформации сильно отличается")
+                }
+            }
+
+            if (isExperimentRunning) {
                 findResonance()
             }
 
@@ -474,12 +504,24 @@ class Experiment2Controller : DeviceState(), ExperimentController {
 
                     appendOneMessageToLog("Начался отсчет времени")
                     time = currentTestItem . timesViu [i]
+                    var timeForCoef = 0
                     while (isExperimentRunning && timePassed < time) {
                         time = currentTestItem.timesViu[i]
                         sleep(1000)
-                        timePassed += 1
+                        timePassed += 1.0
+                        experiment2Model!!.time = timePassed.toString()
                         if (time != stackTriples[i].second.text.toDouble()) {
                             time = currentTestItem.timesViu[i]
+                        }
+                        measuringUAMPMinute += measuringUAMP
+                        measuringURMSMinute += measuringURMS
+                        timeForCoef += 1
+                        if (timeForCoef >= 15) {
+                            val coefAmp = String.format("%.4f", measuringUAMPMinute / measuringURMSMinute)
+                            experiment2Model!!.coefAmp = coefAmp
+                            measuringUAMPMinute = 0f
+                            measuringURMSMinute = 0f
+                            timeForCoef = 0
                         }
                     }
                     fillPointData()
@@ -521,7 +563,6 @@ class Experiment2Controller : DeviceState(), ExperimentController {
                 communicationModel.внимание_Off()
             }
 
-
             communicationModel.finalizeAllDevices()
 
             if (cause != "") {
@@ -545,43 +586,6 @@ class Experiment2Controller : DeviceState(), ExperimentController {
                 buttonNext.isDisable = false
             }
         }.start()
-    }
-
-    private fun findResonance() {
-        appendOneMessageToLog("Идет поиск резонанса")
-        if (statusVFD == VFD_REVERSE && isExperimentRunning && isDevicesResponding) {
-            communicationModel.changeRotation()
-            sleep(2000)
-        }
-        communicationModel.startObject()
-        var highestU = measuringU
-        var lowestI = measuringIB
-        var step = 5
-        while ((step-- > 0) && isExperimentRunning && isDevicesResponding) {
-            if (measuringU > highestU) {
-                highestU = measuringU
-                step = 5
-            }
-            if (measuringIB < lowestI) {
-                lowestI = measuringIB
-                step = 5
-            }
-            sleep(500)
-        }
-        communicationModel.stopObject()
-        sleep(3000)
-        communicationModel.changeRotation()
-        communicationModel.setObjectParams(25 * 100, 380 * 10, 25 * 100)
-        communicationModel.startObject()
-        while (measuringU < highestU && measuringIB > lowestI && isExperimentRunning && isDevicesResponding) { //Из-за инерции
-            if (statusEndsVFD == OMIK_DOWN_END) {
-                setCause("Не удалось подобрать резонанс")
-            }
-            sleep(10)
-        }
-        communicationModel.stopObject()
-        appendOneMessageToLog("Поиск завершен")
-        sleep(1000)
     }
 
     private fun fillPointData() {
@@ -639,6 +643,44 @@ class Experiment2Controller : DeviceState(), ExperimentController {
         appendOneMessageToLog("Точная регулировка закончена")
 
         communicationModel.stopLATR()
+    }
+
+    private fun findResonance() {
+        appendOneMessageToLog("Идет поиск резонанса")
+        if (statusVFD == VFD_REVERSE && isExperimentRunning && isDevicesResponding) {
+            communicationModel.changeRotation()
+            sleep(2000)
+        }
+        communicationModel.startObject()
+        sleep(3000)
+        var highestU = measuringU
+        var lowestI = measuringIB
+        var step = 5
+        while ((step-- > 0) && isExperimentRunning && isDevicesResponding) {
+            if (measuringU > highestU) {
+                highestU = measuringU
+                step = 5
+            }
+            if (measuringIB < lowestI) {
+                lowestI = measuringIB
+                step = 5
+            }
+            sleep(500)
+        }
+        communicationModel.stopObject()
+        sleep(3000)
+        communicationModel.changeRotation()
+        communicationModel.setObjectParams(25 * 100, 380 * 10, 25 * 100)
+        communicationModel.startObject()
+        while (measuringU < highestU && measuringIB > lowestI && isExperimentRunning && isDevicesResponding) { //Из-за инерции
+            if (statusEndsVFD == OMIK_DOWN_END) {
+                setCause("Не удалось подобрать резонанс")
+            }
+            sleep(10)
+        }
+        communicationModel.stopObject()
+        appendOneMessageToLog("Поиск завершен")
+        sleep(1000)
     }
 
     private fun resetOmik() {
@@ -772,6 +814,7 @@ class Experiment2Controller : DeviceState(), ExperimentController {
                 OwenPRModel.СТОП_ИСПЫТАНИЯ -> {
                     стопИспытания = value as Boolean
                     if (стопИспытания) {
+                        isExperimentRunning = false
                         setCause("Во время испытания была нажата кнопка СТОП")
                     }
                 }
@@ -787,6 +830,11 @@ class Experiment2Controller : DeviceState(), ExperimentController {
                 PM130Model.RESPONDING_PARAM -> {
                     isParmaResponding = value as Boolean
                     Platform.runLater { deviceStateCirclePM130.fill = if (value) Color.LIME else Color.RED }
+                }
+                PM130Model.I1_PARAM -> {
+                    measuringIA = value as Float * 20
+                    val iA = String.format("%.2f", measuringIA)
+                    experiment2Model!!.currentA = iA
                 }
                 PM130Model.I2_PARAM -> {
                     measuringIB = value as Float * 20
@@ -839,10 +887,19 @@ class Experiment2Controller : DeviceState(), ExperimentController {
                     Platform.runLater { deviceStateCircleKiloAvem.fill = if (value) Color.LIME else Color.RED }
                 }
                 AvemVoltmeterModel.U_RMS_PARAM -> {
-                    measuringU = (value as Float) * 1000
+                    measuringURMS = (value as Float) * 1000
+                    measuringU = value * 1000
                     coef = (measuringU / (measuringULatr / 140)).toDouble()
                     val kiloAvemU = String.format("%.2f", measuringU)
                     experiment2Model!!.voltage = kiloAvemU
+                }
+                AvemVoltmeterModel.U_AMP_PARAM -> {
+                    measuringUAMP = abs((value as Float) * 1000)
+                }
+                AvemVoltmeterModel.F_PARAM -> {
+                    val measuringF = (value as Float)
+                    val kiloAvemF = String.format("%.2f", measuringF)
+                    experiment2Model!!.frequency = kiloAvemF
                 }
             }
 

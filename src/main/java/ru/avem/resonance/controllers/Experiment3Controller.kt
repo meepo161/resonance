@@ -42,6 +42,8 @@ class Experiment3Controller : DeviceState(), ExperimentController {
     @FXML
     lateinit var tableViewExperiment3: TableView<Experiment3Model>
     @FXML
+    lateinit var tableViewExperiment33: TableView<Experiment3Model>
+    @FXML
     lateinit var tableColumnU: TableColumn<Experiment3Model, String>
     @FXML
     lateinit var tableColumnIB: TableColumn<Experiment3Model, String>
@@ -122,6 +124,8 @@ class Experiment3Controller : DeviceState(), ExperimentController {
     private var measuringU: Float = 0.0f
     @Volatile
     private var measuringULatr: Float = 0.0f
+    @Volatile
+    private var measuringIA: Float = 0.0f
     @Volatile
     private var measuringIB: Float = 0.0f
     @Volatile
@@ -474,6 +478,7 @@ class Experiment3Controller : DeviceState(), ExperimentController {
                         time = currentTestItem.timesViuDC[i]
                         sleep(1000)
                         timePassed += 1.0
+                        experiment3Model!!.time = timePassed.toString()
                         if (time != stackTriples[i].second.text.toDouble()) {
                             time = currentTestItem.timesViuDC[i]
                         }
@@ -730,6 +735,7 @@ class Experiment3Controller : DeviceState(), ExperimentController {
                 OwenPRModel.СТОП_ИСПЫТАНИЯ -> {
                     стопИспытания = value as Boolean
                     if (стопИспытания) {
+                        isExperimentRunning = false
                         setCause("Во время испытания была нажата кнопка СТОП")
                     }
                 }
@@ -745,6 +751,11 @@ class Experiment3Controller : DeviceState(), ExperimentController {
                 PM130Model.RESPONDING_PARAM -> {
                     isParmaResponding = value as Boolean
                     Platform.runLater { deviceStateCirclePM130.fill = if (value) Color.LIME else Color.RED }
+                }
+                PM130Model.I1_PARAM -> {
+                    measuringIA = value as Float * 20
+                    val iA = String.format("%.2f", measuringIA)
+                    experiment3Model!!.currentA = iA
                 }
                 PM130Model.I2_PARAM -> {
                     measuringIB = value as Float * 20

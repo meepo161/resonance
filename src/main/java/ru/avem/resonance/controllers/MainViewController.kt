@@ -200,6 +200,8 @@ class MainViewController : Statable {
                 Toast.makeText("Сохранить не удалось. Напряжение в этом опыте не может быть больше 43кВ. Измените данные для продолжения").show(Toast.ToastType.ERROR)
             } else if (radioViu.isSelected && it.first.text.toDoubleOrNull()!! > 60.0) {
                 Toast.makeText("Сохранить не удалось. Напряжение в этом опыте не может быть больше 60кВ. Измените данные для продолжения").show(Toast.ToastType.ERROR)
+            } else if (it.third.text.toDoubleOrNull()!! > 2.0) {
+                Toast.makeText("Сохранить не удалось. Скорость не должна быть больше 2кВ/с").show(Toast.ToastType.ERROR)
             } else {
                 voltages.add(it.first.text.toDouble())
                 times.add(it.second.text.toDouble())
@@ -260,19 +262,19 @@ class MainViewController : Statable {
     }
 
     private fun newTextFieldsForChart(): Triple<TextField, TextField, TextField> {
-        val time = TextField()
-        time.isEditable = true
-        time.prefWidth = 72.0
-        time.maxWidth = 72.0
-        time.setOnAction {
-            changeValuesInDB()
-        }
-
         val voltage = TextField()
         voltage.isEditable = true
         voltage.prefWidth = 72.0
         voltage.maxWidth = 72.0
         voltage.setOnAction {
+            changeValuesInDB()
+        }
+
+        val time = TextField()
+        time.isEditable = true
+        time.prefWidth = 72.0
+        time.maxWidth = 72.0
+        time.setOnAction {
             changeValuesInDB()
         }
 
@@ -283,7 +285,7 @@ class MainViewController : Statable {
         speed.setOnAction {
             changeValuesInDB()
         }
-        return Triple(time, voltage, speed)
+        return Triple(voltage, time, speed)
     }
 
     private fun changeValuesInDB() {

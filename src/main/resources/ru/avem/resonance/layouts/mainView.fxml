@@ -272,7 +272,7 @@
                                                             </graphic>
                                                         </Button>
                                                         <Button layoutX="819.0" layoutY="14.0" mnemonicParsing="false" onAction="#handleAddTestItem" style="-fx-background-color: linear-gradient(#55d43d, #8ce17d);" text="Добавить" />
-                                                        <Button layoutX="878.0" layoutY="14.0" mnemonicParsing="false" onAction="#handleDeleteTestItem" style="-fx-background-color: linear-gradient(#ff6f8c, #FF6F61);" text="Удалить" />
+                                                        <Button layoutX="878.0" layoutY="14.0" mnemonicParsing="false" onAction="#handleDeleteTestItem" style="-fx-background-color: linear-gradient(#ff8c6f, #FF616F);" text="Удалить" />
                                                     </children>
                                                     <VBox.margin>
                                                         <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
@@ -318,7 +318,7 @@
                                 </AnchorPane>
                                 <HBox alignment="CENTER" spacing="16.0" GridPane.columnSpan="2" GridPane.rowIndex="2">
                                     <children>
-                                        <Button fx:id="buttonProtocolCancel" mnemonicParsing="false" onAction="#handleButtonProtocolCancel" style="-fx-background-color: linear-gradient(#ff6f8c, #FF6F61); -fx-font-size: 32;" text="Очистить" />
+                                        <Button fx:id="buttonProtocolCancel" mnemonicParsing="false" onAction="#handleButtonProtocolCancel" style="-fx-background-color: linear-gradient(#ff8c6f, #FF616F); -fx-font-size: 32;" text="Очистить" />
                                         <Button fx:id="buttonProtocolNext" mnemonicParsing="false" onAction="#handleButtonProtocolNext" style="-fx-background-color: linear-gradient(#55d43d, #8ce17d); -fx-font-size: 32;" text="Создать" />
                                     </children>
                                     <GridPane.margin>
@@ -329,14 +329,14 @@
                                     <children>
                                         <HBox alignment="CENTER" spacing="16.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                             <children>
-                                                <RadioButton fx:id="radioResonance" mnemonicParsing="false" onAction="#handleSelectTestItemExperiment" text="Резонасный ВИУ" toggleGroup="$experimentsGroup">
+                                                <RadioButton fx:id="radioResonance" mnemonicParsing="false" onAction="#handleSelectTestItemExperiment" text="ВИУ до 43кВ" toggleGroup="$experimentsGroup">
                                                     <toggleGroup>
                                                         <ToggleGroup fx:id="experimentsGroup" />
                                                     </toggleGroup>
                                                 </RadioButton>
-                                                <RadioButton fx:id="radioViu" layoutX="530.0" layoutY="38.0" mnemonicParsing="false" onAction="#handleSelectTestItemExperiment" text="ВИУ переменным напяржением" toggleGroup="$experimentsGroup">
+                                                <RadioButton fx:id="radioViu" layoutX="530.0" layoutY="38.0" mnemonicParsing="false" onAction="#handleSelectTestItemExperiment" text="ВИУ до 60кВ" toggleGroup="$experimentsGroup">
                                                 </RadioButton>
-                                                <RadioButton fx:id="radioViuDC" mnemonicParsing="false" onAction="#handleSelectTestItemExperiment" prefHeight="25.0" text="ВИУ постоянным напряжением" toggleGroup="$experimentsGroup" wrapText="true" />
+                                                <RadioButton fx:id="radioViuDC" mnemonicParsing="false" onAction="#handleSelectTestItemExperiment" prefHeight="25.0" text="ВИУ постоянным" toggleGroup="$experimentsGroup" wrapText="true" />
                                             </children>
                                             <padding>
                                                 <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
@@ -349,7 +349,7 @@
                                         <HBox alignment="CENTER" layoutY="-36.0" spacing="16.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                             <children>
                                                 <Button fx:id="buttonAdd" mnemonicParsing="false" onAction="#handleAddTriple" prefHeight="69.0" style="-fx-background-color: linear-gradient(#55d43d, #8ce17d); -fx-font-size: 20;" text="Добавить" />
-                                                <Button fx:id="buttonRemove" mnemonicParsing="false" onAction="#handleRemoveTriple" prefHeight="69.0" style="-fx-background-color: linear-gradient(#ff6f8c, #FF6F61); -fx-font-size: 20;" text="Удалить" />
+                                                <Button fx:id="buttonRemove" mnemonicParsing="false" onAction="#handleRemoveTriple" prefHeight="69.0" style="-fx-background-color: linear-gradient(#ff8c6f, #FF616F); -fx-font-size: 20;" text="Удалить" />
                                             </children>
                                             <padding>
                                                 <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />

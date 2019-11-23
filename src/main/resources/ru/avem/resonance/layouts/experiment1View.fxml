@@ -17,6 +17,8 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Circle?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
 
 <AnchorPane fx:id="root" prefHeight="768.0" prefWidth="1366.0" stylesheets="@../styles/main_css.css"
             xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1"
@@ -189,7 +191,7 @@
                     <children>
                         <ScrollPane fx:id="scrollPaneTimeTorque" hbarPolicy="NEVER" layoutX="124.0" layoutY="-41.0"
                                     prefHeight="560.0" prefWidth="388.0" vbarPolicy="ALWAYS"
-                                    AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                                    AnchorPane.bottomAnchor="64.0" AnchorPane.leftAnchor="0.0"
                                     AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="16.0">
                             <content>
                                 <AnchorPane fx:id="anchorPaneTimeTorque" prefHeight="97.0" prefWidth="269.0">
@@ -210,21 +212,21 @@
                                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
                                             </rowConstraints>
                                             <children>
-                                                <VBox fx:id="vBoxTime" alignment="TOP_CENTER" prefHeight="200.0"
-                                                      prefWidth="100.0" spacing="8.0" GridPane.columnIndex="1">
+                                                <VBox fx:id="vBoxVoltage" alignment="TOP_CENTER" prefHeight="135.0"
+                                                      prefWidth="38.0" spacing="8.0">
                                                     <children>
-                                                        <Label text="Время, сек" textAlignment="CENTER" wrapText="true">
+                                                        <Label alignment="CENTER" text="Напряжение,кВ"
+                                                               textAlignment="CENTER" wrapText="true">
                                                             <VBox.margin>
                                                                 <Insets top="8.0"/>
                                                             </VBox.margin>
                                                         </Label>
                                                     </children>
                                                 </VBox>
-                                                <VBox fx:id="vBoxVoltage" alignment="TOP_CENTER" prefHeight="135.0"
-                                                      prefWidth="38.0" spacing="8.0">
+                                                <VBox fx:id="vBoxTime" alignment="TOP_CENTER" prefHeight="200.0"
+                                                      prefWidth="100.0" spacing="8.0" GridPane.columnIndex="1">
                                                     <children>
-                                                        <Label alignment="CENTER" text="Напряжение,кВ"
-                                                               textAlignment="CENTER" wrapText="true">
+                                                        <Label text="Время, сек" textAlignment="CENTER" wrapText="true">
                                                             <VBox.margin>
                                                                 <Insets top="8.0"/>
                                                             </VBox.margin>
@@ -248,6 +250,14 @@
                                 </AnchorPane>
                             </content>
                         </ScrollPane>
+                        <Text layoutX="52.0" layoutY="651.0" strokeType="OUTSIDE" strokeWidth="0.0"
+                              text="Для подтверждения изменений нажмите Enter" textAlignment="CENTER"
+                              wrappingWidth="179.99999779462814" AnchorPane.leftAnchor="52.0"
+                              AnchorPane.rightAnchor="68.00000220537186">
+                            <font>
+                                <Font size="15.0"/>
+                            </font>
+                        </Text>
                     </children>
                 </AnchorPane>
                 <AnchorPane GridPane.columnIndex="1" GridPane.rowIndex="1">
@@ -256,10 +266,11 @@
                               AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                             <children>
                                 <Button fx:id="buttonAdd" mnemonicParsing="false" onAction="#handleAddPair"
-                                        prefWidth="128.0"
-                                        style="-fx-background-color: linear-gradient(#55d43d, #8ce17d);" text="+"/>
+                                        style="-fx-background-color: linear-gradient(#55d43d, #8ce17d); -fx-font-size: 14;"
+                                        text="Добавить"/>
                                 <Button fx:id="buttonRemove" mnemonicParsing="false" onAction="#handleRemovePair"
-                                        style="-fx-background-color: linear-gradient(#ff6f8c, #FF6F61);" text="-"/>
+                                        style="-fx-background-color: linear-gradient(#ff8c6f, #FF616F); -fx-font-size: 14;"
+                                        text="Удалить"/>
                             </children>
                             <padding>
                                 <Insets bottom="16.0" left="16.0" right="16.0" top="16.0"/>

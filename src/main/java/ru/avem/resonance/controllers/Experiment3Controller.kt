@@ -218,8 +218,8 @@ class Experiment3Controller : DeviceState(), ExperimentController {
     private fun fillStackPairs() {
         for (i in 0 until currentTestItem.timesViuDC.size) {
             addPair()
-            lastTriple.first.text = currentTestItem.timesViuDC[i].toString()
-            lastTriple.second.text = currentTestItem.voltageViuDC[i].toString()
+            lastTriple.first.text = currentTestItem.voltageViuDC[i].toString()
+            lastTriple.second.text = currentTestItem.timesViuDC[i].toString()
             lastTriple.third.text = currentTestItem.speedViuDC[i].toString()
         }
     }
@@ -233,8 +233,8 @@ class Experiment3Controller : DeviceState(), ExperimentController {
     private fun addPair() {
         lastTriple = newTextFieldsForChart()
         stackTriples.push(lastTriple)
-        vBoxTime.children.add(lastTriple.first)
-        vBoxVoltage.children.add(lastTriple.second)
+        vBoxVoltage.children.add(lastTriple.first)
+        vBoxTime.children.add(lastTriple.second)
         vBoxSpeed.children.add(lastTriple.third)
         anchorPaneTimeTorque.prefHeight += MainViewController.HEIGHT_VBOX
     }
@@ -253,8 +253,8 @@ class Experiment3Controller : DeviceState(), ExperimentController {
     private fun removePair() {
         lastTriple = stackTriples.pop()
         Platform.runLater {
-            vBoxTime.children.remove(lastTriple.first)
-            vBoxVoltage.children.remove(lastTriple.second)
+            vBoxVoltage.children.remove(lastTriple.first)
+            vBoxTime.children.remove(lastTriple.second)
             vBoxSpeed.children.remove(lastTriple.third)
             anchorPaneTimeTorque.prefHeight -= MainViewController.HEIGHT_VBOX
         }
@@ -297,17 +297,21 @@ class Experiment3Controller : DeviceState(), ExperimentController {
         val speeds: ArrayList<Double> = ArrayList()
 
         stackTriples.forEach {
-            if (!it.first.text.isNullOrEmpty() && !it.second.text.isNullOrEmpty() && !it.third.text.isNullOrEmpty() &&
-                    it.first.text.toDoubleOrNull() != null && it.second.text.toDoubleOrNull() != null && it.third.text.toDoubleOrNull() != null) {
+            if (it.first.text.isNullOrEmpty() && it.second.text.isNullOrEmpty() && it.third.text.isNullOrEmpty() &&
+                    it.first.text.toDoubleOrNull() == null && it.second.text.toDoubleOrNull() == null && it.third.text.toDoubleOrNull() == null) {
+                handleRemovePair()
+            } else if (it.first.text.toDoubleOrNull()!! > 80.0) {
+                Toast.makeText("Сохранить не удалось. Напряжение в этом опыте не может быть больше 80кВ.").show(Toast.ToastType.ERROR)
+            } else if (it.third.text.toDoubleOrNull()!! > 2.0) {
+                Toast.makeText("Сохранить не удалось. Скорость не должна быть больше 2кВ/с").show(Toast.ToastType.ERROR)
+            } else {
                 times.add(it.first.text.toDouble())
                 voltages.add(it.second.text.toDouble())
                 speeds.add(it.third.text.toDouble())
-            } else {
-                handleRemovePair()
             }
         }
-        currentTestItem.timesViuDC = times
         currentTestItem.voltageViuDC = voltages
+        currentTestItem.timesViuDC = times
         currentTestItem.speedViuDC = speeds
 
         voltageList = currentProtocol.voltageViuDC
@@ -315,6 +319,7 @@ class Experiment3Controller : DeviceState(), ExperimentController {
         speedList = currentProtocol.speedViuDC
 
         TestItemRepository.updateTestItem(currentTestItem)
+        Toast.makeText("Сделаны изменения").show(Toast.ToastType.CONFIRM)
     }
 
     private fun createLoadDiagram() {
@@ -360,7 +365,6 @@ class Experiment3Controller : DeviceState(), ExperimentController {
 
     private fun stopExperiment() {
         isNeedToRefresh = false
-        buttonStartStop.isDisable = true
         setCause("Отменено оператором")
         isExperimentRunning = false
     }
@@ -386,7 +390,6 @@ class Experiment3Controller : DeviceState(), ExperimentController {
         Thread {
 
             if (isExperimentRunning) {
-                appendOneMessageToLog("Визуально осматривайте трансфоматор на наличие потеков масла перед каждым опытом")
                 appendOneMessageToLog("Инициализация системы")
                 communicationModel.initOwenPrController()
                 communicationModel.initExperimentDevices()
@@ -403,7 +406,14 @@ class Experiment3Controller : DeviceState(), ExperimentController {
                 communicationModel.таймер_Off()
                 communicationModel.таймер_On()
                 communicationModel.таймер_Off()
-                communicationModel.разрешениеНаЗапуск_On()
+            }
+
+            if (!контрольРубильника && isExperimentRunning && isDevicesResponding) {
+                appendOneMessageToLog("Поднимите рубильник силового питания")
+            }
+
+            while (!контрольРубильника && isExperimentRunning && isDevicesResponding) {
+                sleep(10)
             }
 
             if (isExperimentRunning && isDevicesResponding) {
@@ -412,25 +422,6 @@ class Experiment3Controller : DeviceState(), ExperimentController {
 
             while (!контрольПуска && isExperimentRunning && isDevicesResponding) {
                 communicationModel.разрешениеНаЗапуск_On()
-                sleep(10)
-            }
-
-            if (!контрольРубильника && isExperimentRunning && isDevicesResponding) {
-                sleep(1000)
-                communicationModel.разрешениеНаЗапуск_Off()
-                appendOneMessageToLog("Поднимите рубильник силового питания")
-            }
-
-            while (!контрольРубильника && isExperimentRunning && isDevicesResponding) {
-                sleep(10)
-            }
-
-            if (!контрольПуска && isExperimentRunning && isDevicesResponding) {
-                communicationModel.разрешениеНаЗапуск_On()
-                appendOneMessageToLog("Нажмите кнопку ПУСК")
-            }
-
-            while (!контрольПуска && isExperimentRunning && isDevicesResponding) {
                 sleep(10)
             }
 
@@ -464,7 +455,7 @@ class Experiment3Controller : DeviceState(), ExperimentController {
                         handleRemovePair()
                         break
                     }
-                    stackTriples[i].second.isDisable = true
+                    stackTriples[i].first.isDisable = true
                     stackTriples[i].third.isDisable = true
                     timePassed = 0.0
                     if (isExperimentRunning && isDevicesResponding) {
@@ -477,6 +468,7 @@ class Experiment3Controller : DeviceState(), ExperimentController {
                     }
                     communicationModel.таймер_On()
 
+                    appendOneMessageToLog("Начался отсчет времени")
                     time = currentTestItem.timesViuDC[i]
                     while (isExperimentRunning && timePassed < time) {
                         time = currentTestItem.timesViuDC[i]
@@ -490,7 +482,7 @@ class Experiment3Controller : DeviceState(), ExperimentController {
 
                     voltageList = currentTestItem.voltageViuDC
                     timeSum += currentTestItem.timesViuDC[i]
-                    stackTriples[i].first.isDisable = true
+                    stackTriples[i].second.isDisable = true
                     i++
                     communicationModel.таймер_Off()
                 }
@@ -545,7 +537,6 @@ class Experiment3Controller : DeviceState(), ExperimentController {
                 buttonStartStop.style = "-fx-background-color: linear-gradient(#55d43d, #8ce17d);"
                 isExperimentEnded = true
                 isExperimentRunning = false
-                buttonStartStop.isDisable = false
                 buttonNext.isDisable = false
             }
         }.start()
@@ -807,7 +798,7 @@ class Experiment3Controller : DeviceState(), ExperimentController {
                 }
                 AvemVoltmeterModel.U_AMP_PARAM -> {
                     measuringU = abs((value as Float) * 1000)
-                    coef = (measuringU / (measuringULatr / 102)).toDouble()
+                    coef = (measuringU / (measuringULatr / 140)).toDouble()
                     val kiloAvemU = String.format("%.2f", measuringU)
                     experiment3Model!!.voltage = kiloAvemU
                 }
@@ -824,8 +815,8 @@ class Experiment3Controller : DeviceState(), ExperimentController {
                     checkLatrStatus()
                 }
                 LatrModel.U_PARAM -> {
-                    measuringULatr = (value as Float) * 102
-                    val uLatr = String.format("%.2f", measuringULatr / 102)
+                    measuringULatr = (value as Float) * 140
+                    val uLatr = String.format("%.2f", measuringULatr / 140)
                     experiment3Model!!.voltageARN = uLatr
                 }
             }

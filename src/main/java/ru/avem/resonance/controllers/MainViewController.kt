@@ -97,7 +97,6 @@ class MainViewController : Statable {
     private lateinit var lastTriple: Triple<TextField, TextField, TextField>
     private val stackTriples: Stack<Triple<TextField, TextField, TextField>> = Stack()
 
-
     private var allTestItems = TestItemRepository.getAllTestItems()
     var currentTestItem: TestItem = mainModel.currentTestItem
     private val resultData = FXCollections.observableArrayList<ResultModel>()
@@ -106,6 +105,7 @@ class MainViewController : Statable {
     private val waitState = WaitState(this)
     private val resultState = ResultState(this)
     private var currentState: State = idleState
+
 
     //endregion
 
@@ -195,11 +195,11 @@ class MainViewController : Statable {
         stackTriples.forEach {
             if (it.first.text.isNullOrEmpty() && it.second.text.isNullOrEmpty() && it.third.text.isNullOrEmpty() &&
                     it.first.text.toDoubleOrNull() == null && it.second.text.toDoubleOrNull() == null && it.third.text.toDoubleOrNull() == null) {
-                Toast.makeText("Проверьте правильность введенных напряжений и времени проверки").show(Toast.ToastType.WARNING)
+                Toast.makeText("Проверьте правильность введенных напряжений и времени проверки").show(Toast.ToastType.ERROR)
             } else if (radioResonance.isSelected && it.first.text.toDoubleOrNull()!! > 43.0) {
-                Toast.makeText("Напряжение в этом опыте не может быть больше 43кВ. Измените данные для продолжения").show(Toast.ToastType.WARNING)
+                Toast.makeText("Сохранить не удалось. Напряжение в этом опыте не может быть больше 43кВ. Измените данные для продолжения").show(Toast.ToastType.ERROR)
             } else if (radioViu.isSelected && it.first.text.toDoubleOrNull()!! > 60.0) {
-                Toast.makeText("Напряжение в этом опыте не может быть больше 60кВ. Измените данные для продолжения").show(Toast.ToastType.WARNING)
+                Toast.makeText("Сохранить не удалось. Напряжение в этом опыте не может быть больше 60кВ. Измените данные для продолжения").show(Toast.ToastType.ERROR)
             } else {
                 voltages.add(it.first.text.toDouble())
                 times.add(it.second.text.toDouble())
@@ -289,7 +289,7 @@ class MainViewController : Statable {
     private fun changeValuesInDB() {
         saveTestItemPoints()
         createLoadDiagram()
-        Toast.makeText("Изменения сохранены").show(Toast.ToastType.CONFIRM)
+        Toast.makeText("Сделаны изменения").show(Toast.ToastType.CONFIRM)
     }
 
     @FXML

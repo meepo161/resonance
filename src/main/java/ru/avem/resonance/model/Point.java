@@ -3,21 +3,21 @@ package ru.avem.resonance.model;
 import java.io.Serializable;
 
 public class Point implements Serializable {
-    private double measuringUOut;
-    private double measuringIC;
+    private String measuringUOut;
+    private String measuringIC;
     private String measuringTime;
 
-    public Point(double measuringUOut, double measuringIC, String measuringTime) {
+    public Point(String measuringUOut, String measuringIC, String measuringTime) {
         this.measuringUOut = measuringUOut;
         this.measuringIC = measuringIC;
         this.measuringTime = measuringTime;
     }
 
-    public double getMeasuringUOut() {
+    public String getMeasuringUOut() {
         return measuringUOut;
     }
 
-    public double getMeasuringIC() {
+    public String getMeasuringIC() {
         return measuringIC;
     }
 

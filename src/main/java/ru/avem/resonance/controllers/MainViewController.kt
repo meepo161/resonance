@@ -193,13 +193,17 @@ class MainViewController : Statable {
         val speeds: ArrayList<Double> = ArrayList()
 
         stackTriples.forEach {
-            if (!it.first.text.isNullOrEmpty() && !it.second.text.isNullOrEmpty() && !it.third.text.isNullOrEmpty() &&
-                    it.first.text.toDoubleOrNull() != null && it.second.text.toDoubleOrNull() != null && it.third.text.toDoubleOrNull() != null) {
-                times.add(it.first.text.toDouble())
-                voltages.add(it.second.text.toDouble())
-                speeds.add(it.third.text.toDouble())
-            } else {
+            if (it.first.text.isNullOrEmpty() && it.second.text.isNullOrEmpty() && it.third.text.isNullOrEmpty() &&
+                    it.first.text.toDoubleOrNull() == null && it.second.text.toDoubleOrNull() == null && it.third.text.toDoubleOrNull() == null) {
                 Toast.makeText("Проверьте правильность введенных напряжений и времени проверки").show(Toast.ToastType.WARNING)
+            } else if (radioResonance.isSelected && it.first.text.toDoubleOrNull()!! > 43.0) {
+                Toast.makeText("Напряжение в этом опыте не может быть больше 43кВ. Измените данные для продолжения").show(Toast.ToastType.WARNING)
+            } else if (radioViu.isSelected && it.first.text.toDoubleOrNull()!! > 60.0) {
+                Toast.makeText("Напряжение в этом опыте не может быть больше 60кВ. Измените данные для продолжения").show(Toast.ToastType.WARNING)
+            } else {
+                voltages.add(it.first.text.toDouble())
+                times.add(it.second.text.toDouble())
+                speeds.add(it.third.text.toDouble())
             }
         }
         when {
@@ -218,8 +222,6 @@ class MainViewController : Statable {
                 currentTestItem.voltageViuDC = voltages
                 currentTestItem.speedViuDC = speeds
             }
-            radioViuDC.isSelected -> {
-            }
         }
         TestItemRepository.updateTestItem(currentTestItem)
     }
@@ -232,8 +234,8 @@ class MainViewController : Statable {
     private fun addTriple() {
         lastTriple = newTextFieldsForChart()
         stackTriples.push(lastTriple)
-        vBoxTime.children.add(lastTriple.first)
-        vBoxVoltage.children.add(lastTriple.second)
+        vBoxVoltage.children.add(lastTriple.first)
+        vBoxTime.children.add(lastTriple.second)
         vBoxSpeed.children.add(lastTriple.third)
         anchorPaneTimeTorque.prefHeight += HEIGHT_VBOX
     }
@@ -251,8 +253,8 @@ class MainViewController : Statable {
 
     private fun removeTriple() {
         lastTriple = stackTriples.pop()
-        vBoxTime.children.remove(lastTriple.first)
-        vBoxVoltage.children.remove(lastTriple.second)
+        vBoxVoltage.children.remove(lastTriple.first)
+        vBoxTime.children.remove(lastTriple.second)
         vBoxSpeed.children.remove(lastTriple.third)
         anchorPaneTimeTorque.prefHeight -= HEIGHT_VBOX
     }
@@ -263,8 +265,7 @@ class MainViewController : Statable {
         time.prefWidth = 72.0
         time.maxWidth = 72.0
         time.setOnAction {
-            saveTestItemPoints()
-            createLoadDiagram()
+            changeValuesInDB()
         }
 
         val voltage = TextField()
@@ -272,8 +273,7 @@ class MainViewController : Statable {
         voltage.prefWidth = 72.0
         voltage.maxWidth = 72.0
         voltage.setOnAction {
-            saveTestItemPoints()
-            createLoadDiagram()
+            changeValuesInDB()
         }
 
         val speed = TextField()
@@ -281,10 +281,15 @@ class MainViewController : Statable {
         speed.prefWidth = 72.0
         speed.maxWidth = 72.0
         speed.setOnAction {
-            saveTestItemPoints()
-            createLoadDiagram()
+            changeValuesInDB()
         }
         return Triple(time, voltage, speed)
+    }
+
+    private fun changeValuesInDB() {
+        saveTestItemPoints()
+        createLoadDiagram()
+        Toast.makeText("Изменения сохранены").show(Toast.ToastType.CONFIRM)
     }
 
     @FXML
@@ -305,8 +310,8 @@ class MainViewController : Statable {
                 buttonRemove.isVisible = true
                 for (i in 0 until currentTestItem.timesResonance.size) {
                     handleAddTriple()
-                    lastTriple.first.text = currentTestItem.timesResonance[i].toString()
-                    lastTriple.second.text = currentTestItem.voltageResonance[i].toString()
+                    lastTriple.first.text = currentTestItem.voltageResonance[i].toString()
+                    lastTriple.second.text = currentTestItem.timesResonance[i].toString()
                     lastTriple.third.text = currentTestItem.speedResonance[i].toString()
                 }
             }
@@ -317,8 +322,8 @@ class MainViewController : Statable {
                 buttonRemove.isVisible = true
                 for (i in 0 until currentTestItem.timesViu.size) {
                     handleAddTriple()
-                    lastTriple.first.text = currentTestItem.timesViu[i].toString()
-                    lastTriple.second.text = currentTestItem.voltageViu[i].toString()
+                    lastTriple.first.text = currentTestItem.voltageViu[i].toString()
+                    lastTriple.second.text = currentTestItem.timesViu[i].toString()
                     lastTriple.third.text = currentTestItem.speedViu[i].toString()
                 }
             }
@@ -329,8 +334,8 @@ class MainViewController : Statable {
                 buttonRemove.isVisible = true
                 for (i in 0 until currentTestItem.timesViuDC.size) {
                     handleAddTriple()
-                    lastTriple.first.text = currentTestItem.timesViuDC[i].toString()
-                    lastTriple.second.text = currentTestItem.voltageViuDC[i].toString()
+                    lastTriple.first.text = currentTestItem.voltageViuDC[i].toString()
+                    lastTriple.second.text = currentTestItem.timesViuDC[i].toString()
                     lastTriple.third.text = currentTestItem.speedViuDC[i].toString()
                 }
             }

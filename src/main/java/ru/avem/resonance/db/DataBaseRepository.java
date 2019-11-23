@@ -23,7 +23,7 @@ public abstract class DataBaseRepository {
             ArrayList<Double> timesResonance = new ArrayList<>();
             timesResonance.add(0, 1.0);
             ArrayList<Double> voltageResonance = new ArrayList<>();
-            voltageResonance.add(0, 2.0);
+            voltageResonance.add(0, 3.0);
             ArrayList<Double> speedResonance = new ArrayList<>();
             speedResonance.add(0, 2.0);
             ArrayList<Double> timesViu = new ArrayList<>();

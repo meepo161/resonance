@@ -26,12 +26,12 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
 
-<AnchorPane fx:id="root" prefHeight="768.0" prefWidth="1366.0" xmlns="http://javafx.com/javafx/8.0.171"
-            xmlns:fx="http://javafx.com/fxml/1" fx:controller="ru.avem.resonance.controllers.MainViewController">
+<AnchorPane fx:id="root" prefHeight="768.0" prefWidth="1366.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ru.avem.resonance.controllers.MainViewController">
     <children>
-        <BorderPane layoutX="10.0" layoutY="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
-                    AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <BorderPane layoutX="10.0" layoutY="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <top>
                 <MenuBar fx:id="menuBar" BorderPane.alignment="CENTER">
                     <menus>
@@ -41,7 +41,7 @@
                                     <graphic>
                                         <ImageView>
                                             <image>
-                                                <Image url="@../icon/protocolNew.png"/>
+                                                <Image url="@../icon/protocolNew.png" />
                                             </image>
                                         </ImageView>
                                     </graphic>
@@ -50,38 +50,35 @@
                                     <graphic>
                                         <ImageView>
                                             <image>
-                                                <Image url="@../icon/protocolOpen.png"/>
+                                                <Image url="@../icon/protocolOpen.png" />
                                             </image>
                                         </ImageView>
                                     </graphic>
                                 </MenuItem>
-                                <MenuItem mnemonicParsing="false" onAction="#handleMenuBarProtocolOpenFromDB"
-                                          text="Открыть из базы данных">
+                                <MenuItem mnemonicParsing="false" onAction="#handleMenuBarProtocolOpenFromDB" text="Открыть из базы данных">
                                     <graphic>
                                         <ImageView>
                                             <image>
-                                                <Image url="@../icon/protocolOpenFromDB.png"/>
+                                                <Image url="@../icon/protocolOpenFromDB.png" />
                                             </image>
                                         </ImageView>
                                     </graphic>
                                 </MenuItem>
-                                <MenuItem fx:id="menuBarProtocolSaveAs" mnemonicParsing="false"
-                                          onAction="#handleMenuBarProtocolSaveAs" text="Сохранить как...">
+                                <MenuItem fx:id="menuBarProtocolSaveAs" mnemonicParsing="false" onAction="#handleMenuBarProtocolSaveAs" text="Сохранить как...">
                                     <graphic>
                                         <ImageView>
                                             <image>
-                                                <Image url="@../icon/protocolSaveAs.png"/>
+                                                <Image url="@../icon/protocolSaveAs.png" />
                                             </image>
                                         </ImageView>
                                     </graphic>
                                 </MenuItem>
-                                <SeparatorMenuItem mnemonicParsing="false"/>
-                                <MenuItem fx:id="handleExit" mnemonicParsing="false" onAction="#handleExit"
-                                          text="Выход">
+                                <SeparatorMenuItem mnemonicParsing="false" />
+                                <MenuItem fx:id="handleExit" mnemonicParsing="false" onAction="#handleExit" text="Выход">
                                     <graphic>
                                         <ImageView>
                                             <image>
-                                                <Image url="@../icon/protocolExit.png"/>
+                                                <Image url="@../icon/protocolExit.png" />
                                             </image>
                                         </ImageView>
                                     </graphic>
@@ -90,12 +87,11 @@
                         </Menu>
                         <Menu mnemonicParsing="false" text="База данных">
                             <items>
-                                <MenuItem fx:id="editTestItem" mnemonicParsing="false" onAction="#handleEditTestItem"
-                                          text="Объект испытания">
+                                <MenuItem fx:id="editTestItem" mnemonicParsing="false" onAction="#handleEditTestItem" text="Объект испытания">
                                     <graphic>
                                         <ImageView>
                                             <image>
-                                                <Image url="@../icon/dataBaseTestItem.png"/>
+                                                <Image url="@../icon/dataBaseTestItem.png" />
                                             </image>
                                         </ImageView>
                                     </graphic>
@@ -104,7 +100,7 @@
                                     <graphic>
                                         <ImageView>
                                             <image>
-                                                <Image url="@../icon/dataBaseProtocol.png"/>
+                                                <Image url="@../icon/dataBaseProtocol.png" />
                                             </image>
                                         </ImageView>
                                     </graphic>
@@ -113,17 +109,17 @@
                                     <graphic>
                                         <ImageView>
                                             <image>
-                                                <Image url="@../icon/dataBaseProfiles.png"/>
+                                                <Image url="@../icon/dataBaseProfiles.png" />
                                             </image>
                                         </ImageView>
                                     </graphic>
                                 </MenuItem>
-                                <SeparatorMenuItem mnemonicParsing="false"/>
+                                <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#handleImportDB" text="Импорт...">
                                     <graphic>
                                         <ImageView>
                                             <image>
-                                                <Image url="@../icon/dataBaseImport.png"/>
+                                                <Image url="@../icon/dataBaseImport.png" />
                                             </image>
                                         </ImageView>
                                     </graphic>
@@ -132,7 +128,7 @@
                                     <graphic>
                                         <ImageView>
                                             <image>
-                                                <Image url="@../icon/dataBaseExport.png"/>
+                                                <Image url="@../icon/dataBaseExport.png" />
                                             </image>
                                         </ImageView>
                                     </graphic>
@@ -141,32 +137,29 @@
                         </Menu>
                         <Menu mnemonicParsing="false" text="Инструменты">
                             <items>
-                                <MenuItem mnemonicParsing="false" onAction="#handleDeviceState"
-                                          text="Состояние устройств">
+                                <MenuItem mnemonicParsing="false" onAction="#handleDeviceState" text="Состояние устройств">
                                     <graphic>
                                         <ImageView>
                                             <image>
-                                                <Image url="@../icon/InstrumentsDeviceStates.png"/>
+                                                <Image url="@../icon/InstrumentsDeviceStates.png" />
                                             </image>
                                         </ImageView>
                                     </graphic>
                                 </MenuItem>
-                                <MenuItem mnemonicParsing="false" onAction="#handleCurrentProtection"
-                                          text="Состояние защит">
+                                <MenuItem mnemonicParsing="false" onAction="#handleCurrentProtection" text="Состояние защит">
                                     <graphic>
                                         <ImageView>
                                             <image>
-                                                <Image url="@../icon/InstrumentsCurrentProtection.png"/>
+                                                <Image url="@../icon/InstrumentsCurrentProtection.png" />
                                             </image>
                                         </ImageView>
                                     </graphic>
                                 </MenuItem>
-                                <CheckMenuItem fx:id="checkMenuItemTheme" mnemonicParsing="false"
-                                               onAction="#handleCheckMenuItemTheme" text="Темная тема">
+                                <CheckMenuItem fx:id="checkMenuItemTheme" mnemonicParsing="false" onAction="#handleCheckMenuItemTheme" text="Темная тема">
                                     <graphic>
                                         <ImageView>
                                             <image>
-                                                <Image url="@../icon/InstrumentsTheme.png"/>
+                                                <Image url="@../icon/InstrumentsTheme.png" />
                                             </image>
                                         </ImageView>
                                     </graphic>
@@ -175,7 +168,7 @@
                                     <graphic>
                                         <ImageView>
                                             <image>
-                                                <Image url="@../icon/InstrumentsInfo.png"/>
+                                                <Image url="@../icon/InstrumentsInfo.png" />
                                             </image>
                                         </ImageView>
                                     </graphic>
@@ -188,84 +181,56 @@
             <center>
                 <AnchorPane prefHeight="880.0" prefWidth="3418.0" BorderPane.alignment="CENTER">
                     <children>
-                        <GridPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-                                  AnchorPane.topAnchor="0.0">
+                        <GridPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                             <columnConstraints>
-                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308"/>
-                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="300.0" minWidth="300.0"
-                                                   prefWidth="300.0"/>
+                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" />
+                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="300.0" minWidth="300.0" prefWidth="300.0" />
                             </columnConstraints>
                             <rowConstraints>
-                                <RowConstraints vgrow="ALWAYS"/>
-                                <RowConstraints/>
-                                <RowConstraints/>
+                                <RowConstraints vgrow="ALWAYS" />
+                                <RowConstraints />
+                                <RowConstraints />
                             </rowConstraints>
                             <children>
-                                <AnchorPane prefHeight="391.0" prefWidth="430.0" GridPane.columnIndex="1"
-                                            GridPane.rowSpan="2">
+                                <AnchorPane prefHeight="391.0" prefWidth="430.0" GridPane.columnIndex="1">
                                     <children>
-                                        <ScrollPane fx:id="scrollPaneTimeTorque" hbarPolicy="NEVER" layoutX="124.0"
-                                                    layoutY="-41.0" prefHeight="560.0" prefWidth="388.0"
-                                                    vbarPolicy="ALWAYS" AnchorPane.bottomAnchor="0.0"
-                                                    AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="16.0"
-                                                    AnchorPane.topAnchor="16.0">
+                                        <ScrollPane fx:id="scrollPaneTimeTorque" hbarPolicy="NEVER" layoutX="124.0" layoutY="-41.0" prefHeight="560.0" prefWidth="388.0" vbarPolicy="ALWAYS" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="16.0">
                                             <content>
-                                                <AnchorPane fx:id="anchorPaneTimeTorque" prefHeight="97.0"
-                                                            prefWidth="269.0">
+                                                <AnchorPane fx:id="anchorPaneTimeTorque" prefHeight="97.0" prefWidth="269.0">
                                                     <children>
-                                                        <GridPane fx:id="gridPaneTimeTorque" layoutX="203.0"
-                                                                  prefHeight="135.0" prefWidth="253.0"
-                                                                  AnchorPane.bottomAnchor="-38.0"
-                                                                  AnchorPane.leftAnchor="0.0"
-                                                                  AnchorPane.rightAnchor="0.0"
-                                                                  AnchorPane.topAnchor="0.0">
+                                                        <GridPane fx:id="gridPaneTimeTorque" layoutX="203.0" prefHeight="135.0" prefWidth="253.0" AnchorPane.bottomAnchor="-38.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                             <columnConstraints>
-                                                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0"
-                                                                                   percentWidth="48.0"
-                                                                                   prefWidth="100.0"/>
-                                                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0"
-                                                                                   percentWidth="48.0"
-                                                                                   prefWidth="100.0"/>
-                                                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0"
-                                                                                   percentWidth="48.0"
-                                                                                   prefWidth="100.0"/>
+                                                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="48.0" prefWidth="100.0" />
+                                                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="48.0" prefWidth="100.0" />
+                                                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="48.0" prefWidth="100.0" />
                                                             </columnConstraints>
                                                             <rowConstraints>
-                                                                <RowConstraints minHeight="10.0" prefHeight="30.0"
-                                                                                vgrow="SOMETIMES"/>
+                                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                                             </rowConstraints>
                                                             <children>
-                                                                <VBox fx:id="vBoxTime" alignment="TOP_CENTER"
-                                                                      prefHeight="200.0" prefWidth="100.0" spacing="8.0"
-                                                                      GridPane.columnIndex="1">
+                                                                <VBox fx:id="vBoxVoltage" alignment="TOP_CENTER" prefHeight="135.0" prefWidth="38.0" spacing="8.0">
                                                                     <children>
-                                                                        <Label text="Время, сек" textAlignment="CENTER"
-                                                                               wrapText="true">
+                                                                        <Label alignment="CENTER" text="Напряжение, кВ" textAlignment="CENTER" wrapText="true">
                                                                             <VBox.margin>
-                                                                                <Insets top="8.0"/>
+                                                                                <Insets top="8.0" />
                                                                             </VBox.margin>
                                                                         </Label>
                                                                     </children>
                                                                 </VBox>
-                                                                <VBox fx:id="vBoxVoltage" alignment="TOP_CENTER"
-                                                                      prefHeight="135.0" prefWidth="38.0" spacing="8.0">
+                                                                <VBox fx:id="vBoxTime" alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" spacing="8.0" GridPane.columnIndex="1">
                                                                     <children>
-                                                                        <Label alignment="CENTER" text="Напряжение, кВ"
-                                                                               textAlignment="CENTER" wrapText="true">
+                                                                        <Label text="Время, сек" textAlignment="CENTER" wrapText="true">
                                                                             <VBox.margin>
-                                                                                <Insets top="8.0"/>
+                                                                                <Insets top="8.0" />
                                                                             </VBox.margin>
                                                                         </Label>
                                                                     </children>
                                                                 </VBox>
-                                                                <VBox fx:id="vBoxSpeed" alignment="TOP_CENTER"
-                                                                      prefHeight="135.0" prefWidth="38.0" spacing="8.0"
-                                                                      GridPane.columnIndex="2">
+                                                                <VBox fx:id="vBoxSpeed" alignment="TOP_CENTER" prefHeight="135.0" prefWidth="38.0" spacing="8.0" GridPane.columnIndex="2">
                                                                     <children>
-                                                                        <Label alignment="CENTER" text="Скорость, кВ/с"
-                                                                               textAlignment="CENTER" wrapText="true">
+                                                                        <Label alignment="CENTER" text="Скорость, кВ/с" textAlignment="CENTER" wrapText="true">
                                                                             <VBox.margin>
-                                                                                <Insets top="8.0"/>
+                                                                                <Insets top="8.0" />
                                                                             </VBox.margin>
                                                                         </Label>
                                                                     </children>
@@ -280,9 +245,7 @@
                                 </AnchorPane>
                                 <AnchorPane>
                                     <children>
-                                        <VBox alignment="TOP_CENTER" spacing="4.0" AnchorPane.bottomAnchor="0.0"
-                                              AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-                                              AnchorPane.topAnchor="0.0">
+                                        <VBox alignment="TOP_CENTER" spacing="4.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                             <children>
                                                 <HBox alignment="CENTER" spacing="16.0">
                                                     <children>
@@ -290,41 +253,32 @@
                                                             <graphic>
                                                                 <ImageView fitHeight="42.0" fitWidth="42.0">
                                                                     <image>
-                                                                        <Image url="@../icon/testitem.png"/>
+                                                                        <Image url="@../icon/testitem.png" />
                                                                     </image>
                                                                 </ImageView>
                                                             </graphic>
                                                         </Label>
-                                                        <ComboBox fx:id="comboBoxTestItem"
-                                                                  onAction="#handleSelectTestItemExperiment"
-                                                                  prefHeight="39.0" prefWidth="338.0"/>
-                                                        <Button mnemonicParsing="false" onAction="#handleEditTestItem"
-                                                                style="-fx-background-color: linear-gradient(#6f8cff, #6F61FF);">
+                                                        <ComboBox fx:id="comboBoxTestItem" onAction="#handleSelectTestItemExperiment" prefHeight="39.0" prefWidth="338.0" />
+                                                        <Button mnemonicParsing="false" onAction="#handleEditTestItem" style="-fx-background-color: linear-gradient(#6f8cff, #6F61FF);">
                                                             <graphic>
                                                                 <ImageView fitHeight="16.0" fitWidth="16.0">
                                                                     <image>
-                                                                        <Image url="@../icon/edit.png"/>
+                                                                        <Image url="@../icon/edit.png" />
                                                                     </image>
                                                                     <viewport>
-                                                                        <Rectangle2D/>
+                                                                        <Rectangle2D />
                                                                     </viewport>
                                                                 </ImageView>
                                                             </graphic>
                                                         </Button>
-                                                        <Button layoutX="819.0" layoutY="14.0" mnemonicParsing="false"
-                                                                onAction="#handleAddTestItem"
-                                                                style="-fx-background-color: linear-gradient(#55d43d, #8ce17d);"
-                                                                text="Добавить"/>
-                                                        <Button layoutX="878.0" layoutY="14.0" mnemonicParsing="false"
-                                                                onAction="#handleDeleteTestItem"
-                                                                style="-fx-background-color: linear-gradient(#ff6f8c, #FF6F61);"
-                                                                text="Удалить"/>
+                                                        <Button layoutX="819.0" layoutY="14.0" mnemonicParsing="false" onAction="#handleAddTestItem" style="-fx-background-color: linear-gradient(#55d43d, #8ce17d);" text="Добавить" />
+                                                        <Button layoutX="878.0" layoutY="14.0" mnemonicParsing="false" onAction="#handleDeleteTestItem" style="-fx-background-color: linear-gradient(#ff6f8c, #FF6F61);" text="Удалить" />
                                                     </children>
                                                     <VBox.margin>
-                                                        <Insets bottom="16.0" left="16.0" right="16.0" top="16.0"/>
+                                                        <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
                                                     </VBox.margin>
                                                     <padding>
-                                                        <Insets left="16.0" right="16.0"/>
+                                                        <Insets left="16.0" right="16.0" />
                                                     </padding>
                                                 </HBox>
                                                 <HBox alignment="CENTER" spacing="16.0">
@@ -333,104 +287,89 @@
                                                             <graphic>
                                                                 <ImageView fitHeight="42.0" fitWidth="42.0">
                                                                     <image>
-                                                                        <Image url="@../icon/serialNumber.png"/>
+                                                                        <Image url="@../icon/serialNumber.png" />
                                                                     </image>
                                                                 </ImageView>
                                                             </graphic>
                                                         </Label>
-                                                        <TextField fx:id="textFieldSerialNumber" prefWidth="557.0"/>
+                                                        <TextField fx:id="textFieldSerialNumber" prefWidth="557.0" />
                                                     </children>
                                                     <padding>
-                                                        <Insets left="16.0" right="16.0"/>
+                                                        <Insets left="16.0" right="16.0" />
                                                     </padding>
                                                 </HBox>
-                                                <LineChart fx:id="loadDiagram" animated="false" legendVisible="false"
-                                                           VBox.vgrow="ALWAYS">
+                                                <LineChart fx:id="loadDiagram" animated="false" legendVisible="false" VBox.vgrow="ALWAYS">
                                                     <xAxis>
-                                                        <NumberAxis animated="false" side="BOTTOM" tickLength="0.0"
-                                                                    fx:id="xAxis"/>
+                                                        <NumberAxis animated="false" side="BOTTOM" tickLength="0.0" fx:id="xAxis" />
                                                     </xAxis>
                                                     <yAxis>
-                                                        <NumberAxis fx:id="yAxis" animated="false" minorTickCount="20"
-                                                                    side="LEFT" upperBound="10.0"/>
+                                                        <NumberAxis fx:id="yAxis" animated="false" minorTickCount="20" side="LEFT" upperBound="10.0" />
                                                     </yAxis>
                                                     <VBox.margin>
-                                                        <Insets bottom="16.0" left="16.0" right="16.0" top="16.0"/>
+                                                        <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
                                                     </VBox.margin>
                                                 </LineChart>
                                             </children>
                                             <opaqueInsets>
-                                                <Insets/>
+                                                <Insets />
                                             </opaqueInsets>
                                         </VBox>
                                     </children>
                                 </AnchorPane>
                                 <HBox alignment="CENTER" spacing="16.0" GridPane.columnSpan="2" GridPane.rowIndex="2">
                                     <children>
-                                        <Button fx:id="buttonProtocolCancel" mnemonicParsing="false"
-                                                onAction="#handleButtonProtocolCancel"
-                                                style="-fx-background-color: linear-gradient(#ff6f8c, #FF6F61); -fx-font-size: 32;"
-                                                text="Очистить"/>
-                                        <Button fx:id="buttonProtocolNext" mnemonicParsing="false"
-                                                onAction="#handleButtonProtocolNext"
-                                                style="-fx-background-color: linear-gradient(#55d43d, #8ce17d); -fx-font-size: 32;"
-                                                text="Создать"/>
+                                        <Button fx:id="buttonProtocolCancel" mnemonicParsing="false" onAction="#handleButtonProtocolCancel" style="-fx-background-color: linear-gradient(#ff6f8c, #FF6F61); -fx-font-size: 32;" text="Очистить" />
+                                        <Button fx:id="buttonProtocolNext" mnemonicParsing="false" onAction="#handleButtonProtocolNext" style="-fx-background-color: linear-gradient(#55d43d, #8ce17d); -fx-font-size: 32;" text="Создать" />
                                     </children>
                                     <GridPane.margin>
-                                        <Insets bottom="16.0" left="16.0" right="16.0" top="16.0"/>
+                                        <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
                                     </GridPane.margin>
                                 </HBox>
                                 <AnchorPane prefHeight="47.0" prefWidth="1066.0" GridPane.rowIndex="1">
                                     <children>
-                                        <HBox alignment="CENTER" spacing="16.0" AnchorPane.bottomAnchor="0.0"
-                                              AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-                                              AnchorPane.topAnchor="0.0">
+                                        <HBox alignment="CENTER" spacing="16.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                             <children>
-                                                <RadioButton fx:id="radioResonance" mnemonicParsing="false"
-                                                             onAction="#handleSelectTestItemExperiment"
-                                                             text="Резонасный ВИУ" toggleGroup="$experimentsGroup">
+                                                <RadioButton fx:id="radioResonance" mnemonicParsing="false" onAction="#handleSelectTestItemExperiment" text="Резонасный ВИУ" toggleGroup="$experimentsGroup">
                                                     <toggleGroup>
-                                                        <ToggleGroup fx:id="experimentsGroup"/>
+                                                        <ToggleGroup fx:id="experimentsGroup" />
                                                     </toggleGroup>
                                                 </RadioButton>
-                                                <RadioButton fx:id="radioViu" layoutX="530.0" layoutY="38.0"
-                                                             mnemonicParsing="false"
-                                                             onAction="#handleSelectTestItemExperiment"
-                                                             text="ВИУ переменным напяржением"
-                                                             toggleGroup="$experimentsGroup">
+                                                <RadioButton fx:id="radioViu" layoutX="530.0" layoutY="38.0" mnemonicParsing="false" onAction="#handleSelectTestItemExperiment" text="ВИУ переменным напяржением" toggleGroup="$experimentsGroup">
                                                 </RadioButton>
-                                                <RadioButton fx:id="radioViuDC" mnemonicParsing="false"
-                                                             onAction="#handleSelectTestItemExperiment"
-                                                             prefHeight="25.0" text="ВИУ постоянным напряжением"
-                                                             toggleGroup="$experimentsGroup" wrapText="true"/>
+                                                <RadioButton fx:id="radioViuDC" mnemonicParsing="false" onAction="#handleSelectTestItemExperiment" prefHeight="25.0" text="ВИУ постоянным напряжением" toggleGroup="$experimentsGroup" wrapText="true" />
                                             </children>
                                             <padding>
-                                                <Insets bottom="16.0" left="16.0" right="16.0" top="16.0"/>
+                                                <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
                                             </padding>
                                         </HBox>
                                     </children>
                                 </AnchorPane>
                                 <AnchorPane GridPane.columnIndex="1" GridPane.rowIndex="2">
                                     <children>
-                                        <HBox alignment="CENTER" layoutY="-36.0" spacing="16.0"
-                                              AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
-                                              AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                        <HBox alignment="CENTER" layoutY="-36.0" spacing="16.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                             <children>
-                                                <Button fx:id="buttonAdd" mnemonicParsing="false"
-                                                        onAction="#handleAddTriple" prefHeight="69.0" prefWidth="140.0"
-                                                        style="-fx-background-color: linear-gradient(#55d43d, #8ce17d); -fx-font-size: 32;"
-                                                        text="+"/>
-                                                <Button fx:id="buttonRemove" mnemonicParsing="false"
-                                                        onAction="#handleRemoveTriple" prefWidth="92.0"
-                                                        style="-fx-background-color: linear-gradient(#ff6f8c, #FF6F61); -fx-font-size: 32;"
-                                                        text="-"/>
+                                                <Button fx:id="buttonAdd" mnemonicParsing="false" onAction="#handleAddTriple" prefHeight="69.0" style="-fx-background-color: linear-gradient(#55d43d, #8ce17d); -fx-font-size: 20;" text="Добавить" />
+                                                <Button fx:id="buttonRemove" mnemonicParsing="false" onAction="#handleRemoveTriple" prefHeight="69.0" style="-fx-background-color: linear-gradient(#ff6f8c, #FF6F61); -fx-font-size: 20;" text="Удалить" />
                                             </children>
                                             <padding>
-                                                <Insets bottom="16.0" left="16.0" right="16.0" top="16.0"/>
+                                                <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
                                             </padding>
                                         </HBox>
                                     </children>
                                 </AnchorPane>
+                        <AnchorPane GridPane.columnIndex="1" GridPane.rowIndex="1">
+                           <children>
+                              <HBox alignment="CENTER" layoutX="14.0" prefHeight="59.0" prefWidth="300.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                 <children>
+                                    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Для сохранения изменений нажмите Enter" textAlignment="CENTER" wrappingWidth="266.0">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Text>
+                                 </children>
+                              </HBox>
+                           </children>
+                        </AnchorPane>
                             </children>
                         </GridPane>
                     </children>
@@ -439,6 +378,6 @@
         </BorderPane>
     </children>
     <stylesheets>
-        <URL value="@../styles/main_css.css"/>
+        <URL value="@../styles/main_css.css" />
     </stylesheets>
 </AnchorPane>

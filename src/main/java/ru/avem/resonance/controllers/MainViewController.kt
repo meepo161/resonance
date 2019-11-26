@@ -195,8 +195,8 @@ class MainViewController : Statable {
         stackTriples.forEach {
             if (it.first.text.isNullOrEmpty() && it.second.text.isNullOrEmpty() && it.third.text.isNullOrEmpty() &&
                     it.first.text.toDoubleOrNull() == null && it.second.text.toDoubleOrNull() == null && it.third.text.toDoubleOrNull() == null) {
-                Toast.makeText("Проверьте правильность введенных напряжений и времени проверки").show(Toast.ToastType.ERROR)
-            } else if (radioResonance.isSelected && it.first.text.toDoubleOrNull()!! > 43.0) {
+                Toast.makeText("Пустые поля. Проверьте правильность введенных напряжений, времени проверки и скорости").show(Toast.ToastType.ERROR)
+             } else if (radioResonance.isSelected && it.first.text.toDoubleOrNull()!! > 43.0) {
                 Toast.makeText("Сохранить не удалось. Напряжение в этом опыте не может быть больше 43кВ. Измените данные для продолжения").show(Toast.ToastType.ERROR)
             } else if (radioViu.isSelected && it.first.text.toDoubleOrNull()!! > 60.0) {
                 Toast.makeText("Сохранить не удалось. Напряжение в этом опыте не может быть больше 60кВ. Измените данные для продолжения").show(Toast.ToastType.ERROR)

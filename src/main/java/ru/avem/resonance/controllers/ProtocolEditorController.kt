@@ -21,7 +21,6 @@ import ru.avem.resonance.model.MainModel
 import ru.avem.resonance.utils.Toast
 import ru.avem.resonance.utils.Utils.openFile
 import java.io.File
-import java.util.*
 
 class ProtocolEditorController {
     @FXML
@@ -38,8 +37,6 @@ class ProtocolEditorController {
     lateinit var columnProtocolSerialNumber: TableColumn<Protocol, Double>
     @FXML
     lateinit var columnProtocolDate: TableColumn<Protocol, String>
-    @FXML
-    lateinit var columnProtocolTime: TableColumn<Protocol, String>
     @FXML
     lateinit var columnProtocolFullName1: TableColumn<Protocol, Double>
     @FXML
@@ -62,7 +59,6 @@ class ProtocolEditorController {
         columnProtocolID.cellValueFactory = PropertyValueFactory("id")
         columnProtocolSerialNumber.cellValueFactory = PropertyValueFactory("serialNumber")
         columnProtocolDate.cellValueFactory = PropertyValueFactory("date")
-        columnProtocolTime.cellValueFactory = PropertyValueFactory("time")
         columnProtocolFullName1.cellValueFactory = PropertyValueFactory("position1FullName")
         columnProtocolFullName2.cellValueFactory = PropertyValueFactory("position2FullName")
 
@@ -82,8 +78,6 @@ class ProtocolEditorController {
                     return@setPredicate true
                 } else if (protocol.date.toLowerCase().contains(lowerCaseFilter)) {
                     return@setPredicate true
-                } else if (protocol.dayTime.toLowerCase().contains(lowerCaseFilter)) {
-                    return@setPredicate true
                 } else if (protocol.position1FullName.toLowerCase().contains(lowerCaseFilter)) {
                     return@setPredicate true
                 } else if (protocol.position2FullName.toLowerCase().contains(lowerCaseFilter)) {
@@ -98,9 +92,6 @@ class ProtocolEditorController {
         sortedData.comparatorProperty().bind(tableProtocols.comparatorProperty())
 
         tableProtocols.items = sortedData
-        val allExperiments = Arrays.asList(
-                "1. Испытание электродвигателя в основном режиме на холостом ходу.",
-                "2. Испытание электродвигателя с  противодействующим моментом.")
     }
 
     private fun initData() {

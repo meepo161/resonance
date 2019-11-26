@@ -361,7 +361,7 @@
                            <children>
                               <HBox alignment="CENTER" layoutX="14.0" prefHeight="59.0" prefWidth="300.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                  <children>
-                                    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Для сохранения изменений нажмите Enter" textAlignment="CENTER" wrappingWidth="266.0">
+                                    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Для подтверждения изменений нажмите Enter" textAlignment="CENTER" wrappingWidth="266.0">
                                        <font>
                                           <Font size="14.0" />
                                        </font>

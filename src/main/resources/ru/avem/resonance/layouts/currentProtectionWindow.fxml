@@ -40,7 +40,7 @@
                                 <HBox alignment="CENTER_LEFT" spacing="16.0">
                                     <children>
                                         <Circle fill="RED" radius="14.0" stroke="BLACK" strokeType="INSIDE"/>
-                                        <Label text="В ошибке">
+                                        <Label text="Откл">
                                             <font>
                                                 <Font name="Book Antiqua" size="23.0"/>
                                             </font>
@@ -50,7 +50,7 @@
                                 <HBox alignment="CENTER_LEFT" spacing="16.0">
                                     <children>
                                         <Circle fill="LIME" radius="14.0" stroke="BLACK" strokeType="INSIDE"/>
-                                        <Label text="В норме">
+                                        <Label text="Вкл">
                                             <font>
                                                 <Font name="Book Antiqua" size="23.0"/>
                                             </font>

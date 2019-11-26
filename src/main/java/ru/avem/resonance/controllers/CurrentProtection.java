@@ -76,16 +76,16 @@ public class CurrentProtection implements Observer {
                     Platform.runLater(() -> deviceStateKM8.setFill(((boolean) value) ? Color.LIME : Color.RED));
                     break;
                 case OwenPRModel.ТКЗ_ДО_ТРАНСФОРМАТОРА:
-                    Platform.runLater(() -> deviceStateKM9.setFill(((boolean) value) ? Color.LIME : Color.RED));
+                    Platform.runLater(() -> deviceStateKM9.setFill(((boolean) value) ? Color.RED : Color.LIME));
                     break;
                 case OwenPRModel.КОНТРОЛЬ_ДВЕРЕЙ_ШСО:
-                    Platform.runLater(() -> deviceStateKM10.setFill(((boolean) value) ? Color.LIME : Color.RED));
+                    Platform.runLater(() -> deviceStateKM10.setFill(((boolean) value) ? Color.RED : Color.LIME));
                     break;
                 case OwenPRModel.ТКЗ_ОИ:
-                    Platform.runLater(() -> deviceStateKM11.setFill(((boolean) value) ? Color.LIME : Color.RED));
+                    Platform.runLater(() -> deviceStateKM11.setFill(((boolean) value) ? Color.RED : Color.LIME));
                     break;
                 case OwenPRModel.ТКЗ_ПОСЛЕ_ТРАНСФОРМАТОРА:
-                    Platform.runLater(() -> deviceStateKM12.setFill(((boolean) value) ? Color.LIME : Color.RED));
+                    Platform.runLater(() -> deviceStateKM12.setFill(((boolean) value) ? Color.RED : Color.LIME));
                     break;
                 case OwenPRModel.СТОП_ИСПЫТАНИЯ:
                     Platform.runLater(() -> deviceStateKM13.setFill(((boolean) value) ? Color.LIME : Color.RED));

@@ -21,6 +21,7 @@ import ru.avem.resonance.communication.CommunicationModel
 import ru.avem.resonance.communication.devices.DeviceController.*
 import ru.avem.resonance.communication.devices.avem_voltmeter.AvemVoltmeterModel
 import ru.avem.resonance.communication.devices.deltaC2000.DeltaCP2000Model
+import ru.avem.resonance.communication.devices.ipp120.OwenIPP120Controller
 import ru.avem.resonance.communication.devices.latr.LatrModel
 import ru.avem.resonance.communication.devices.pm130.PM130Model
 import ru.avem.resonance.communication.devices.pr200.OwenPRModel
@@ -198,6 +199,7 @@ class Experiment2Controller : DeviceState(), ExperimentController {
     private var timeSum = 0.0
     private var seriesTimesAndVoltage = XYChart.Series<Number, Number>()
     private var realTime = 0.0
+    private var isDiagramNeed = false
 
     var size = currentTestItem.voltageViu.size
 
@@ -232,6 +234,7 @@ class Experiment2Controller : DeviceState(), ExperimentController {
         tableColumnF.setCellValueFactory { cellData -> cellData.value.frequencyProperty() }
         tableColumnCoefAMP.setCellValueFactory { cellData -> cellData.value.coefAmpProperty() }
         tableColumnI1.setCellValueFactory { cellData -> cellData.value.currentAProperty() }
+        tableColumnTime.setCellValueFactory { cellData -> cellData.value.timeProperty() }
         tableColumnResultExperiment2.setCellValueFactory { cellData -> cellData.value.resultProperty() }
         fillStackPairs()
         lineChartExperiment2.data.add(seriesTimesAndVoltage)
@@ -324,9 +327,9 @@ class Experiment2Controller : DeviceState(), ExperimentController {
         stackTriples.forEach {
             if (it.first.text.isNullOrEmpty() && it.second.text.isNullOrEmpty() && it.third.text.isNullOrEmpty() &&
                     it.first.text.toDoubleOrNull() == null && it.second.text.toDoubleOrNull() == null && it.third.text.toDoubleOrNull() == null) {
-                handleRemovePair()
+                Toast.makeText("Пустые поля. Проверьте правильность введенных напряжений, времени проверки и скорости").show(Toast.ToastType.ERROR)
             } else if (it.first.text.toDoubleOrNull()!! > 60.0) {
-                Toast.makeText("Сохранить не удалось. Напряжение в этом опыте не может быть больше 60кВ.").show(Toast.ToastType.ERROR)
+                Toast.makeText("Сохранить не удалось. Напряжение в этом опыте не может быть больше 43кВ.").show(Toast.ToastType.ERROR)
             } else if (it.third.text.toDoubleOrNull()!! > 2.0) {
                 Toast.makeText("Сохранить не удалось. Скорость не должна быть больше 2кВ/с").show(Toast.ToastType.ERROR)
             } else {
@@ -348,8 +351,9 @@ class Experiment2Controller : DeviceState(), ExperimentController {
     }
 
     private fun createLoadDiagram() {
+        isDiagramNeed = true
         Thread {
-            while (isExperimentRunning) {
+            while (isDiagramNeed) {
                 if (realTime < 400) {
                     Platform.runLater {
                         seriesTimesAndVoltage.data.add(XYChart.Data<Number, Number>(realTime, measuringU))
@@ -413,6 +417,7 @@ class Experiment2Controller : DeviceState(), ExperimentController {
         Thread {
 
             if (isExperimentRunning) {
+                communicationModel.showStrings(OwenIPP120Controller.АВТОМАТИЧЕСКИЙ_РЕЖИМ)
                 appendOneMessageToLog("Инициализация системы")
                 communicationModel.initOwenPrController()
                 communicationModel.initExperimentDevices()
@@ -464,14 +469,16 @@ class Experiment2Controller : DeviceState(), ExperimentController {
 
             if (isExperimentRunning) {
                 appendOneMessageToLog("Поднимаем напряжение на объекте испытания для поиска резонанса")
-                communicationModel.startUpLATRUp((1100f / coef).toFloat(), false)
+                communicationModel.startUpLATRWithRegulationSpeed((1100f / coef).toFloat(), false, 50f, 60f)
                 waitingLatrCoarse(1100f)
+                communicationModel.stopLATR()
                 if (measuringULatr < measuringU * 0.5 && measuringULatr * 0.5 > measuringU) {
                     setCause("Коэфицент трансформации сильно отличается")
                 }
             }
 
             if (isExperimentRunning) {
+                sleep(500)
                 findResonance()
             }
 
@@ -563,6 +570,7 @@ class Experiment2Controller : DeviceState(), ExperimentController {
                 communicationModel.внимание_Off()
             }
 
+            isDiagramNeed = false
             communicationModel.finalizeAllDevices()
 
             if (cause != "") {
@@ -601,13 +609,18 @@ class Experiment2Controller : DeviceState(), ExperimentController {
 
     private fun waitingLatrCoarse(voltage: Float) {
         appendOneMessageToLog("Грубая регулировка")
-        while (isExperimentRunning && isDevicesResponding && (measuringU <= voltage * 0.8 || measuringU > voltage * 1.2)) {
-            if (measuringU <= voltage * 0.8) {
-                communicationModel.startUpLATRWithRegulationSpeed(440f, false, 50f, 80f)
-            } else if (measuringU > voltage * 1.2) {
-                communicationModel.startUpLATRWithRegulationSpeed(1f, false, 50f, 80f)
-            } else {
-                break
+        while (isExperimentRunning && isDevicesResponding && (measuringU <= voltage * 0.9 || measuringU > voltage * 1.1)) {
+
+            if (measuringU <= voltage * 0.9) {
+                communicationModel.startUpLATRWithRegulationSpeed(440f, false, 50f, 60f)
+                while (isExperimentRunning && isDevicesResponding && measuringU <= voltage * 0.8) {
+                    sleep(1)
+                }
+            } else if (measuringU > voltage * 1.1) {
+                communicationModel.startUpLATRWithRegulationSpeed(1f, false, 50f, 60f)
+                while (isExperimentRunning && isDevicesResponding && measuringU > voltage * 1.2) {
+                    sleep(1)
+                }
             }
         }
         communicationModel.stopLATR()
@@ -616,29 +629,20 @@ class Experiment2Controller : DeviceState(), ExperimentController {
 
     private fun fineLatr(voltage: Float) {
         appendOneMessageToLog("Точная регулировка")
-        communicationModel.stopLATR()
-        while ((measuringU <= voltage * 0.95 || measuringU > voltage * 1.05) && isExperimentRunning) {
-            if (measuringU * 1.05 > voltage && measuringU * 0.95 < voltage) {
-                communicationModel.stopLATR()
-                break
-            }
-            if (measuringU <= voltage * 0.95) {
-                communicationModel.startUpLATRCharge(440f, false)
-                if (measuringU + 1000 < voltage) {
-                    sleep(2200)
-                } else {
-                    sleep(1600)
+        while (isExperimentRunning && isDevicesResponding && (measuringU <= voltage || measuringU > voltage + 100)) {
+
+            if (measuringU <= voltage) {
+                communicationModel.startUpLATRWithRegulationSpeed(440f, false, 60f, 20f)
+                while (isExperimentRunning && isDevicesResponding && measuringU <= voltage) {
+                    sleep(1)
                 }
-                communicationModel.stopLATR()
-            } else if (measuringU >= voltage * 1.05) {
-                communicationModel.startUpLATRCharge(1f, false)
-                if (measuringU - 1000 > voltage) {
-                    sleep(2200)
-                } else {
-                    sleep(1600)
+            } else if (measuringU > voltage + 100) {
+                communicationModel.startUpLATRWithRegulationSpeed(1f, false, 60f, 20f)
+                while (isExperimentRunning && isDevicesResponding && measuringU > voltage + 100) {
+                    sleep(1)
                 }
-                communicationModel.stopLATR()
             }
+
         }
         appendOneMessageToLog("Точная регулировка закончена")
 
@@ -646,13 +650,14 @@ class Experiment2Controller : DeviceState(), ExperimentController {
     }
 
     private fun findResonance() {
-        appendOneMessageToLog("Идет поиск резонанса")
+        if (isExperimentRunning) {
+            appendOneMessageToLog("Идет поиск резонанса")
+        }
         if (statusVFD == VFD_REVERSE && isExperimentRunning && isDevicesResponding) {
             communicationModel.changeRotation()
             sleep(2000)
         }
         communicationModel.startObject()
-        sleep(3000)
         var highestU = measuringU
         var lowestI = measuringIB
         var step = 5
@@ -668,18 +673,23 @@ class Experiment2Controller : DeviceState(), ExperimentController {
             sleep(500)
         }
         communicationModel.stopObject()
-        sleep(3000)
+        if (isExperimentRunning) {
+            sleep(3000)
+        }
         communicationModel.changeRotation()
         communicationModel.setObjectParams(25 * 100, 380 * 10, 25 * 100)
         communicationModel.startObject()
         while (measuringU < highestU && measuringIB > lowestI && isExperimentRunning && isDevicesResponding) { //Из-за инерции
             if (statusEndsVFD == OMIK_DOWN_END) {
-                setCause("Не удалось подобрать резонанс")
+                appendOneMessageToLog("ОМИК достиг нижнего концевика")
+                break
             }
             sleep(10)
         }
         communicationModel.stopObject()
-        appendOneMessageToLog("Поиск завершен")
+        if (isExperimentRunning) {
+            appendOneMessageToLog("Поиск завершен")
+        }
         sleep(1000)
     }
 

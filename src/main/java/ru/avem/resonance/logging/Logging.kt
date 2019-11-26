@@ -146,20 +146,13 @@ object Logging {
         for (i in points.indices) {
             columnNum = fillOneCell(row, columnNum, cellStyle, points[i].measuringUOut)
             columnNum = fillOneCell(row, columnNum, cellStyle, points[i].measuringIC)
-            columnNum = fillOneCellForTime(row, columnNum, cellStyle, points[i].measuringTime)
+            columnNum = fillOneCell(row, columnNum, cellStyle, points[i].measuringTime)
             row = sheet.createRow(++rowNum)
             columnNum = 5
         }
     }
 
-    private fun fillOneCell(row: Row, columnNum: Int, cellStyle: XSSFCellStyle, points: Double): Int {
-        val cell: Cell = row.createCell(columnNum)
-        cell.cellStyle = cellStyle
-        cell.setCellValue(points)
-        return columnNum + 1
-    }
-
-    private fun fillOneCellForTime(row: Row, columnNum: Int, cellStyle: XSSFCellStyle, time: String): Int {
+    private fun fillOneCell(row: Row, columnNum: Int, cellStyle: XSSFCellStyle, time: String): Int {
         val cell: Cell = row.createCell(columnNum)
         cell.cellStyle = cellStyle
         cell.setCellValue(time)

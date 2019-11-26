@@ -1,11 +1,13 @@
 package ru.avem.resonance.communication;
 
+import javafx.util.Pair;
 import ru.avem.resonance.Constants;
 import ru.avem.resonance.communication.connections.Connection;
 import ru.avem.resonance.communication.connections.SerialConnection;
 import ru.avem.resonance.communication.devices.DeviceController;
 import ru.avem.resonance.communication.devices.avem_voltmeter.AvemVoltmeterController;
 import ru.avem.resonance.communication.devices.deltaC2000.DeltaCP2000Controller;
+import ru.avem.resonance.communication.devices.ipp120.OwenIPP120Controller;
 import ru.avem.resonance.communication.devices.latr.LatrController;
 import ru.avem.resonance.communication.devices.pm130.PM130Controller;
 import ru.avem.resonance.communication.devices.pr200.OwenPRController;
@@ -14,6 +16,7 @@ import ru.avem.resonance.communication.modbus.RTUController;
 import ru.avem.resonance.utils.Logger;
 
 import java.lang.reflect.InvocationTargetException;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
@@ -40,6 +43,7 @@ public class CommunicationModel extends Observable implements Observer {
     private PM130Controller pm130Controller;
     private DeltaCP2000Controller deltaCP2000Controller;
     private LatrController latrController;
+    private OwenIPP120Controller owenIPP120Controller;
 
     private int kms1;
     private int kms2;
@@ -55,6 +59,8 @@ public class CommunicationModel extends Observable implements Observer {
 
         connectMainBus();
         ModbusController modbusController = new RTUController(RS485Connection);
+
+        owenIPP120Controller = new OwenIPP120Controller(0x0A, modbusController, 10);
 
         pm130Controller = new PM130Controller(0x29, this, modbusController, PM130_ID);
         devicesControllers.add(pm130Controller);
@@ -91,7 +97,7 @@ public class CommunicationModel extends Observable implements Observer {
                                 deviceController.read(i);
                             }
                         } else if (deviceController instanceof AvemVoltmeterController) {
-                            for (int i = 0; i <= 1; i++) {
+                            for (int i = 0; i <= 2; i++) {
                                 deviceController.read(i);
                             }
                         } else if (deviceController instanceof OwenPRController) {
@@ -392,6 +398,15 @@ public class CommunicationModel extends Observable implements Observer {
         deltaCP2000Controller.resetAllAttempts();
     }
 
+    public void initPR200Controller() {
+        owenPRController.setNeedToRead(true);
+        owenPRController.resetAllAttempts();
+    }
+
+    public void setIPPiA() {
+
+    }
+
     public void разрешениеНаЗапуск_On() {
         onRegisterInTheKms(1, 1);
     }
@@ -478,6 +493,32 @@ public class CommunicationModel extends Observable implements Observer {
 
     public void внимание_Off() {
         offRegisterInTheKms(3, 2);
+    }
+
+    public void showStrings(int value) {
+        owenIPP120Controller.write((short) 518, 1, 0);
+        owenIPP120Controller.write((short) 519, 1, 1);
+        owenIPP120Controller.write((short) 522, 1, value);
+        owenIPP120Controller.write((short) 523, 1, value);
+    }
+
+    public void showCurrents(float ia, float ib, float ic) {
+        owenIPP120Controller.write((short) 519, 1, 0);
+        owenIPP120Controller.write((short) 518, 1, 1);
+        Pair<Integer, Integer> shortsIA = floatToTwoShorts(ia);
+        Pair<Integer, Integer> shortsIB = floatToTwoShorts(ib);
+        Pair<Integer, Integer> shortsIC = floatToTwoShorts(ic);
+        owenIPP120Controller.write((short) 512, 2, shortsIA.getValue(), shortsIA.getKey());
+        owenIPP120Controller.write((short) 514, 2, shortsIB.getValue(), shortsIB.getKey());
+        owenIPP120Controller.write((short) 516, 2, shortsIC.getValue(), shortsIC.getKey());
+    }
+
+
+    private Pair<Integer, Integer> floatToTwoShorts(float value) {
+        ByteBuffer bb = ByteBuffer.allocate(4);
+        bb.putFloat(value);
+        bb.flip();
+        return new Pair<>((int) bb.getShort(), (int) bb.getShort());
     }
 
     public void setDeviceStateOn(boolean deviceStateOn) {

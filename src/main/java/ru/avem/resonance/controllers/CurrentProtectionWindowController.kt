@@ -25,5 +25,6 @@ class CurrentProtectionWindowController : CurrentProtection() {
         }
         val model = CommunicationModel.getInstance()
         model.addObserver(this)
+        model.initPR200Controller()
     }
 }

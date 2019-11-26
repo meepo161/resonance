@@ -55,8 +55,6 @@ public class Protocol {
     private long millis = System.currentTimeMillis();
     @DatabaseField
     private String date;
-    @DatabaseField
-    private String dayTime;
 
     @DatabaseField(canBeNull = false, dataType = DataType.SERIALIZABLE)
     private ArrayList<Point> points;
@@ -75,9 +73,7 @@ public class Protocol {
         this.position2Number = secondTester.getNumber();
         this.position2FullName = secondTester.getFullName();
         this.millis = millis;
-        this.date = new SimpleDateFormat("dd.MM.yy").format(millis);
-        this.dayTime = new SimpleDateFormat("HH:mm:ss").format(millis);
-
+        this.date = new SimpleDateFormat("dd.MM.yy HH:mm:ss").format(millis);
     }
 
     public long getId() {
@@ -121,7 +117,7 @@ public class Protocol {
 
     public void setMillis(long millis) {
         this.millis = millis;
-        this.date = new SimpleDateFormat("dd.MM.yy").format(millis);
+        this.date = new SimpleDateFormat("dd.MM.yy HH:mm:ss").format(millis);
     }
 
     public String getType() {
@@ -260,14 +256,6 @@ public class Protocol {
         this.date = date;
     }
 
-    public String getDayTime() {
-        return dayTime;
-    }
-
-    public void setDayTime(String dayTime) {
-        this.dayTime = dayTime;
-    }
-
     public String getTypeExperiment() {
         return typeExperiment;
     }
@@ -289,5 +277,4 @@ public class Protocol {
         SimpleDateFormat sdf = new SimpleDateFormat("Время проведения испытания: HH:mm:ss");
         return String.format("%s. № %s (%s) %s", id, serialNumber, type, sdf.format(millis));
     }
-
 }

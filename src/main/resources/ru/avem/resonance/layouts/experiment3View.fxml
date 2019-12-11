@@ -62,7 +62,7 @@
                                         <Label text="Нет данных" />
                                     </placeholder>
                                     <columns>
-                                        <TableColumn fx:id="tableColumnI1" prefWidth="75.0" text="I питания стенда, A" />
+                                        <TableColumn fx:id="tableColumnIA" prefWidth="75.0" text="I питания стенда, A" />
                                         <TableColumn fx:id="tableColumnTime" prefWidth="75.0" text="Время, сек" />
                                         <TableColumn fx:id="tableColumnResultExperiment3" prefWidth="76.0" text="Результат" />
                                     </columns>
@@ -124,7 +124,7 @@
                                                         </HBox>
                                                         <HBox alignment="CENTER_RIGHT" layoutX="10.0" layoutY="196.0" spacing="16.0">
                                                             <children>
-                                                                <Label text="ЛАТР" />
+                                                                <Label text="АРН" />
                                                                 <Circle fx:id="deviceStateCircleLatr" fill="DODGERBLUE" radius="14.0" stroke="BLACK" strokeType="INSIDE" />
                                                             </children>
                                                         </HBox>
@@ -148,7 +148,7 @@
                                                         </HBox>
                                                         <HBox alignment="CENTER_RIGHT" layoutX="10.0" layoutY="159.0" spacing="16.0">
                                                             <children>
-                                                                <Label text="Кило АВЭМ" />
+                                                                <Label text="КВМ" />
                                                                 <Circle fx:id="deviceStateCircleKiloAvem" fill="DODGERBLUE" radius="14.0" stroke="BLACK" strokeType="INSIDE" />
                                                             </children>
                                                         </HBox>

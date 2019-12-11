@@ -178,6 +178,7 @@ public class CommunicationModel extends Observable implements Observer {
 
     private void resetDog() {
         owenPRController.write(RESET_DOG, 1, 1);
+        owenIPP120Controller.write((short) 520, 1, 1);
     }
 
     private void resetResPR200() {

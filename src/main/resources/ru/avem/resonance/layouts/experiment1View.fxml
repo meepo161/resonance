@@ -146,7 +146,7 @@
                                                         <HBox alignment="CENTER_RIGHT" layoutX="10.0" layoutY="196.0"
                                                               spacing="16.0">
                                                             <children>
-                                                                <Label text="ЛАТР"/>
+                                                                <Label text="АРН"/>
                                                                 <Circle fx:id="deviceStateCircleLatr" fill="DODGERBLUE"
                                                                         radius="14.0" stroke="BLACK"
                                                                         strokeType="INSIDE"/>
@@ -181,7 +181,7 @@
                                                         <HBox alignment="CENTER_RIGHT" layoutX="10.0" layoutY="159.0"
                                                               spacing="16.0">
                                                             <children>
-                                                                <Label text="Кило АВЭМ"/>
+                                                                <Label text="КВМ"/>
                                                                 <Circle fx:id="deviceStateCircleKiloAvem"
                                                                         fill="DODGERBLUE" radius="14.0" stroke="BLACK"
                                                                         strokeType="INSIDE"/>

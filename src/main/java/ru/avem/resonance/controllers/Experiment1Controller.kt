@@ -238,8 +238,11 @@ class Experiment1Controller : DeviceState(), ExperimentController {
         tableColumnResultExperiment1.setCellValueFactory { cellData -> cellData.value.resultProperty() }
         fillStackPairs()
         lineChartExperiment1.data.add(seriesTimesAndVoltage)
+        lineChartExperiment1.animated = false
+        lineChartExperiment1.createSymbols = false
         Platform.runLater {
             buttonStartStop.style = "-fx-background-color: linear-gradient(#55d43d, #8ce17d);"
+            buttonStartStop.isDisable = false
         }
     }
 
@@ -351,22 +354,18 @@ class Experiment1Controller : DeviceState(), ExperimentController {
         Toast.makeText("Сделаны изменения").show(Toast.ToastType.CONFIRM)
     }
 
+
     private fun createLoadDiagram() {
         isDiagramNeed = true
         Thread {
             while (isDiagramNeed) {
-                if (realTime < 400) {
-                    Platform.runLater {
+                Platform.runLater {
+                    if (measuringU < 100000) {
                         seriesTimesAndVoltage.data.add(XYChart.Data<Number, Number>(realTime, measuringU))
                     }
-                } else {
-                    Platform.runLater {
-                        seriesTimesAndVoltage.data.clear()
-                    }
-                    realTime = 0.0
                 }
-                sleep(1000)
-                realTime += 1
+                sleep(100)
+                realTime += 0.1
             }
         }.start()
     }
@@ -447,10 +446,10 @@ class Experiment1Controller : DeviceState(), ExperimentController {
 
             if (isExperimentRunning && isDevicesResponding) {
                 appendOneMessageToLog("Нажмите кнопку ПУСК")
+                communicationModel.разрешениеНаЗапуск_On()
             }
 
             while (!контрольПуска && isExperimentRunning && isDevicesResponding) {
-                communicationModel.разрешениеНаЗапуск_On()
                 sleep(10)
             }
 
@@ -498,48 +497,46 @@ class Experiment1Controller : DeviceState(), ExperimentController {
                         handleRemovePair()
                         break
                     }
-                    stackTriples[i].first.isDisable = true
-                    stackTriples[i].third.isDisable = true
-                    timePassed = 0.0
-                    if (isExperimentRunning && isDevicesResponding) {
-                        appendOneMessageToLog("Началась регулировка")
-                        putUpLatr(voltageList[i].toFloat() * 1000)
-                        if (measuringULatr < measuringU * 0.5 && measuringULatr * 0.5 > measuringU) {
-                            setCause("Коэфицент трансформации сильно отличается")
-                        }
-                        appendOneMessageToLog("Регулировка окончена")
-                    }
-                    communicationModel.таймер_On()
+                    if (isExperimentRunning) {
+                        stackTriples[i].first.isDisable = true
+                        stackTriples[i].second.isDisable = true
+                        stackTriples[i].third.isDisable = true
+                        timePassed = 0.0
+                        if (isExperimentRunning && isDevicesResponding) {
+                            appendOneMessageToLog("Началась регулировка")
+                            putUpLatr(voltageList[i].toFloat() * 1000)
+                            if (measuringULatr < measuringU * 0.5 && measuringULatr * 0.5 > measuringU) {
+                                setCause("Коэфицент трансформации сильно отличается")
+                            }
+                            appendOneMessageToLog("Регулировка окончена")
+                            communicationModel.таймер_On()
+                            appendOneMessageToLog("Начался отсчет времени")
 
-                    appendOneMessageToLog("Начался отсчет времени")
-                    time = currentTestItem.timesResonance[i]
-                    var timeForCoef = 0
-                    while (isExperimentRunning && timePassed < time) {
+                        }
+
                         time = currentTestItem.timesResonance[i]
-                        sleep(1000)
-                        timePassed += 1.0
-                        experiment1Model!!.time = timePassed.toString()
-                        if (time != stackTriples[i].second.text.toDouble()) {
-                            time = currentTestItem.timesResonance[i]
-                        }
-                        measuringUAMPMinute += measuringUAMP
-                        measuringURMSMinute += measuringURMS
-                        timeForCoef += 1
-                        if (timeForCoef >= 15) {
-                            val coefAmp = String.format("%.4f", measuringUAMPMinute / measuringURMSMinute)
+                        var timeForCoef = 0
+                        while (isExperimentRunning && timePassed < time) {
+                            sleep(100)
+                            timePassed += 0.1
+                            experiment1Model!!.time = String.format("%.2f", timePassed)
+//                        measuringUAMPMinute += measuringUAMP
+//                        measuringURMSMinute += measuringURMS
+//                        timeForCoef += 1
+//                        if (timeForCoef >= 15) {
+                            val coefAmp = String.format("%.4f", measuringUAMP / measuringURMS)
                             experiment1Model!!.coefAmp = coefAmp
-                            measuringUAMPMinute = 0f
-                            measuringURMSMinute = 0f
-                            timeForCoef = 0
+//                            measuringUAMPMinute = 0f
+//                            measuringURMSMinute = 0f
+//                            timeForCoef = 0
+//                        }
                         }
+                        fillPointData()
+                        voltageList = currentTestItem.voltageResonance
+                        timeSum += currentTestItem.timesResonance[i]
+                        i++
+                        communicationModel.таймер_Off()
                     }
-                    fillPointData()
-
-                    voltageList = currentTestItem.voltageResonance
-                    timeSum += currentTestItem.timesResonance[i]
-                    stackTriples[i].second.isDisable = true
-                    i++
-                    communicationModel.таймер_Off()
                 }
             }
 
@@ -589,10 +586,11 @@ class Experiment1Controller : DeviceState(), ExperimentController {
 
             Platform.runLater()
             {
-                buttonStartStop.text = "Запустить"
-                buttonStartStop.style = "-fx-background-color: linear-gradient(#55d43d, #8ce17d);"
+                //                buttonStartStop.text = "Запустить"
+//                buttonStartStop.style = "-fx-background-color: linear-gradient(#55d43d, #8ce17d);"
                 isExperimentEnded = true
                 isExperimentRunning = false
+                buttonStartStop.isDisable = true
                 buttonNext.isDisable = false
             }
         }.start()
@@ -631,16 +629,16 @@ class Experiment1Controller : DeviceState(), ExperimentController {
 
     private fun fineLatr(voltage: Float) {
         appendOneMessageToLog("Точная регулировка")
-        while (isExperimentRunning && isDevicesResponding && (measuringU <= voltage || measuringU > voltage + 100)) {
+        while (isExperimentRunning && isDevicesResponding && (measuringU <= voltage || measuringU > voltage + 200)) {
 
             if (measuringU <= voltage) {
                 communicationModel.startUpLATRWithRegulationSpeed(440f, false, 60f, 20f)
                 while (isExperimentRunning && isDevicesResponding && measuringU <= voltage) {
                     sleep(1)
                 }
-            } else if (measuringU > voltage + 100) {
+            } else if (measuringU > voltage + 200) {
                 communicationModel.startUpLATRWithRegulationSpeed(1f, false, 60f, 20f)
-                while (isExperimentRunning && isDevicesResponding && measuringU > voltage + 100) {
+                while (isExperimentRunning && isDevicesResponding && measuringU > voltage + 200) {
                     sleep(1)
                 }
             }
@@ -741,7 +739,7 @@ class Experiment1Controller : DeviceState(), ExperimentController {
                 if (isOwenPRResponding) "" else "Овен ПР ",
                 if (isParmaResponding) "" else "Парма ",
                 if (isDeltaResponding) "" else "Дельта ",
-                if (isLatrResponding) "" else "Латр ",
+                if (isLatrResponding) "" else "АРН ",
                 if (isAvemResponding) "" else "АВЭМ ",
                 if (isKiloAvemResponding) "" else "КилоАВЭМ ")
     }
@@ -807,6 +805,9 @@ class Experiment1Controller : DeviceState(), ExperimentController {
                 }
                 OwenPRModel.РУЧНОЙ_РЕЖИМ_С_ПК -> {
                     ручнойРежимСПК = value as Boolean
+                    if (ручнойРежимСПК) {
+                        setCause("Для продолжения переключите на Автоматический режим и начните опыт снова")
+                    }
                 }
                 OwenPRModel.ПЕРЕМЕННОЕ -> {
                     переменное = value as Boolean
@@ -904,6 +905,9 @@ class Experiment1Controller : DeviceState(), ExperimentController {
                     coef = (measuringU / (measuringULatr / 140)).toDouble()
                     val kiloAvemU = String.format("%.2f", measuringU)
                     experiment1Model!!.voltage = kiloAvemU
+                    if (measuringU < 0) {
+                        setCause("Подключен диод в опыте переменного напряжения")
+                    }
                 }
                 AvemVoltmeterModel.U_AMP_PARAM -> {
                     measuringUAMP = abs((value as Float) * 1000)
@@ -937,16 +941,16 @@ class Experiment1Controller : DeviceState(), ExperimentController {
     private fun checkLatrStatus() {
         when (latrStatus) {
             LATR_STARTED -> {
-//                appendOneMessageToLog("Выход ЛАТРа на заданное напряжение")
+//                appendOneMessageToLog("Выход АРНа на заданное напряжение")
             }
             LATR_WAITING -> {
-                appendOneMessageToLog("Выдерживаем заданное напряжение на ЛАТРе")
+                appendOneMessageToLog("Выдерживаем заданное напряжение на АРНе")
             }
             LATR_CONFIG -> {
-                appendOneMessageToLog("Режим кофигурации ЛАТР")
+                appendOneMessageToLog("Режим кофигурации АРН")
             }
             LATR_STOP_RESET -> {
-//                appendOneMessageToLog("Стоп/Ресет ЛАТР")
+//                appendOneMessageToLog("Стоп/Ресет АРН")
             }
         }
     }
@@ -954,19 +958,19 @@ class Experiment1Controller : DeviceState(), ExperimentController {
     private fun checkLatrError() {
         when (latrStatus) {
             LATR_UP_END -> {
-                appendOneMessageToLog("Сработал верхний концевик ЛАТРа.")
+                appendOneMessageToLog("Сработал верхний концевик АРНа.")
             }
             LATR_DOWN_END -> {
-                appendOneMessageToLog("Сработал нижний концевик ЛАТРа.")
+                appendOneMessageToLog("Сработал нижний концевик АРНа.")
             }
             LATR_BOTH_END -> {
-                setCause("Сработали оба концевика ЛАТРа.")
+                setCause("Сработали оба концевика АРНа.")
             }
             LATR_TIME_ENDED -> {
-                setCause("Время регулирования ЛАТРа превысило заданное.")
+                setCause("Время регулирования АРНа превысило заданное.")
             }
             LATR_ZASTRYAL -> {
-                appendOneMessageToLog("Застревание ЛАТРа.")
+                appendOneMessageToLog("Застревание АРНа.")
             }
         }
     }

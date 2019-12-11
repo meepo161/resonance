@@ -116,7 +116,7 @@
                                     <children>
                                         <Circle fx:id="deviceStateCircleLatr" fill="DODGERBLUE" radius="14.0"
                                                 stroke="BLACK" strokeType="INSIDE"/>
-                                        <Label text="ЛАТР">
+                                        <Label text="АРН">
                                             <font>
                                                 <Font name="Book Antiqua" size="23.0"/>
                                             </font>
@@ -127,7 +127,7 @@
                                     <children>
                                         <Circle fx:id="deviceStateCircleKiloAvem" fill="DODGERBLUE" radius="14.0"
                                                 stroke="BLACK" strokeType="INSIDE"/>
-                                        <Label text="Кило АВЭМ">
+                                        <Label text="КВМ">
                                             <font>
                                                 <Font name="Book Antiqua" size="23.0"/>
                                             </font>

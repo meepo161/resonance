@@ -198,7 +198,7 @@ class MainViewController : Statable {
                 Toast.makeText("Пустые поля. Проверьте правильность введенных напряжений, времени проверки и скорости").show(Toast.ToastType.ERROR)
              } else if (radioResonance.isSelected && it.first.text.toDoubleOrNull()!! > 43.0) {
                 Toast.makeText("Сохранить не удалось. Напряжение в этом опыте не может быть больше 43кВ. Измените данные для продолжения").show(Toast.ToastType.ERROR)
-            } else if (radioViu.isSelected && it.first.text.toDoubleOrNull()!! > 60.0) {
+            } else if (radioViu.isSelected && it.first.text.toDoubleOrNull()!! > 66.0) {
                 Toast.makeText("Сохранить не удалось. Напряжение в этом опыте не может быть больше 60кВ. Измените данные для продолжения").show(Toast.ToastType.ERROR)
             } else if (it.third.text.toDoubleOrNull()!! > 2.0) {
                 Toast.makeText("Сохранить не удалось. Скорость не должна быть больше 2кВ/с").show(Toast.ToastType.ERROR)

@@ -76,7 +76,6 @@ public class OwenPRModel extends Observable {
         notice(ПОДЪЕМ_НАПРЯЖЕНИЯ, (statesButtons & 0b1000) > 0);
         notice(УМЕНЬШЕНИЕ_НАПРЯЖЕНИЯ, (statesButtons & 0b10000) > 0);
         notice(УМЕНЬШЕНИЕ_НАПРЯЖЕНИЯ_ОТЖАТ, (statesButtons & 0b10000) == 0);
-
     }
 
     private void notice(int param, Object value) {

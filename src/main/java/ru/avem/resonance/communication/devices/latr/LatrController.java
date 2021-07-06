@@ -106,7 +106,8 @@ public class LatrController implements DeviceController {
                     model.setReadResponding(true);
                     resetReadAttempts();
                     resetReadAttemptsOfAttempts();
-                    model.setEndsStatus(inputBuffer.getInt());
+                    inputBuffer.position(2);
+                    model.setEndsStatus(inputBuffer.get());
                 } else {
                     read(args);
                 }

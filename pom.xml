@@ -116,6 +116,14 @@
                             <goal>testCompile</goal>
                         </goals>
                     </execution>
+                    <execution>
+                        <id>default-compile</id>
+                        <phase>none</phase>
+                    </execution>
+                    <execution>
+                        <id>default-testCompile</id>
+                        <phase>none</phase>
+                    </execution>
                 </executions>
                 <configuration>
                     <source>1.8</source>
@@ -130,7 +138,7 @@
     <url>http://maven.apache.org</url>
 
     <properties>
-        <kotlin.version>1.3.41</kotlin.version>
+        <kotlin.version>1.4.0</kotlin.version>
     </properties>
 
     <dependencies>
@@ -205,6 +213,11 @@
             <groupId>com.jfoenix</groupId>
             <artifactId>jfoenix</artifactId>
             <version>8.0.9</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-stdlib-jdk8</artifactId>
+            <version>${kotlin.version}</version>
         </dependency>
 
     </dependencies>

@@ -84,12 +84,17 @@ public class CommunicationModel extends Observable implements Observer {
             while (!isFinished) {
                 for (DeviceController deviceController : devicesControllers) {
                     if (deviceController.isNeedToRead()) {
-                        if (deviceController instanceof LatrController) {
+                        if (deviceController instanceof OwenPRController) {
+                            resetDog();
+                            for (int i = 0; i <= 1; i++) {
+                                deviceController.read(i);
+                            }
+                        } else if (deviceController instanceof LatrController) {
                             for (int i = 0; i <= 2; i++) {
                                 deviceController.read(i);
                             }
                         } else if (deviceController instanceof PM130Controller) {
-                            for (int i = 1; i <= 3; i++) {
+                            for (int i = 1; i <= 1; i++) {
                                 deviceController.read(i);
                             }
                         } else if (deviceController instanceof DeltaCP2000Controller) {
@@ -100,18 +105,8 @@ public class CommunicationModel extends Observable implements Observer {
                             for (int i = 0; i <= 2; i++) {
                                 deviceController.read(i);
                             }
-                        } else if (deviceController instanceof OwenPRController) {
-                            for (int i = 0; i <= 1; i++) {
-                                deviceController.read(i);
-                            }
                         } else {
                             deviceController.read();
-                        }
-                        if (deviceController instanceof OwenPRController) {
-                            resetDog();
-                            for (int i = 0; i <= 1; i++) {
-                                deviceController.read(i);
-                            }
                         }
                     }
                     if (isDeviceStateOn) {
@@ -436,7 +431,7 @@ public class CommunicationModel extends Observable implements Observer {
         onRegisterInTheKms(7, 1);
     }
 
-    public void таймер_On() {
+    public void таймер_стоп_On() {
         onRegisterInTheKms(8, 1);
     }
 
@@ -468,7 +463,7 @@ public class CommunicationModel extends Observable implements Observer {
         offRegisterInTheKms(7, 1);
     }
 
-    public void таймер_Off() {
+    public void таймер_стоп_Off() {
         offRegisterInTheKms(8, 1);
     }
 

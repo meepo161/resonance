@@ -5,8 +5,8 @@ import ru.avem.resonance.utils.BuildConfig;
 
 public final class Constants {
     public static final class Display {
-        public static final int WIDTH = BuildConfig.DEBUG ? 1366 : 1366;
-        public static final int HEIGHT = BuildConfig.DEBUG ? 768 : 768;
+        public static final int WIDTH = BuildConfig.DEBUG ? 1920 : 1920;
+        public static final int HEIGHT = BuildConfig.DEBUG ? 1080 : 1080;
     }
 
     public static final class Communication {
@@ -22,6 +22,12 @@ public final class Constants {
     public static final class Experiments {
         public static final String EXPERIMENT1_NAME = "1. Испытание электродвигателя в основном режиме на холостом ходу.";
         public static final String EXPERIMENT2_NAME = "2. Испытание электродвигателя с  противодействующим моментом.";
+    }
+
+
+    public static final class CurrentStages {
+        public static final Float PM_CURRENT = 80 / 5f;
+        public static final Float AVEM_CURRENT = 10 / 5f;
     }
 
     public static final class Time {

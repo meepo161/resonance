@@ -37,51 +37,67 @@ import java.io.IOException
 import java.util.*
 import javax.xml.bind.JAXBContext
 import javax.xml.bind.Marshaller
-import kotlin.collections.ArrayList
 import kotlin.math.abs
 
 class MainViewController : Statable {
     //region FXML
     @FXML
     lateinit var buttonProtocolCancel: Button
+
     @FXML
     lateinit var buttonProtocolNext: Button
+
     @FXML
     lateinit var buttonAdd: Button
+
     @FXML
     lateinit var buttonRemove: Button
+
     @FXML
     lateinit var menuBarProtocolSaveAs: MenuItem
+
     @FXML
     lateinit var editTestItem: MenuItem
+
     @FXML
     lateinit var root: AnchorPane
 
     @FXML
     lateinit var radioResonance: RadioButton
+
     @FXML
     lateinit var radioViu: RadioButton
+
     @FXML
     lateinit var radioViuDC: RadioButton
 
     @FXML
     lateinit var gridPaneTimeTorque: GridPane
+
     @FXML
     lateinit var vBoxTime: VBox
+
     @FXML
     lateinit var vBoxVoltage: VBox
+
     @FXML
     lateinit var vBoxSpeed: VBox
+
     @FXML
     lateinit var anchorPaneTimeTorque: AnchorPane
+
     @FXML
     lateinit var scrollPaneTimeTorque: ScrollPane
+
     @FXML
     lateinit var comboBoxTestItem: ComboBox<TestItem>
+
     @FXML
     lateinit var textFieldSerialNumber: TextField
+
     @FXML
     lateinit var loadDiagram: LineChart<Number, Number>
+
     @FXML
     lateinit var checkMenuItemTheme: CheckMenuItem
 
@@ -178,8 +194,8 @@ class MainViewController : Statable {
     private fun initData() {
         radioResonance.isSelected = true
         allTestItems = TestItemRepository.getAllTestItems()
-        comboBoxTestItem.items.clear()
         comboBoxTestItem.selectionModel.clearSelection()
+        comboBoxTestItem.items.clear()
         comboBoxTestItem.items.setAll(allTestItems)
         comboBoxTestItem.selectionModel.clearSelection()
         comboBoxTestItem.selectionModel.selectFirst()
@@ -192,15 +208,29 @@ class MainViewController : Statable {
         val voltages: ArrayList<Double> = ArrayList()
         val speeds: ArrayList<Double> = ArrayList()
 
+        var allOk = true
+
         stackTriples.forEach {
             if (it.first.text.isNullOrEmpty() && it.second.text.isNullOrEmpty() && it.third.text.isNullOrEmpty() &&
-                    it.first.text.toDoubleOrNull() == null && it.second.text.toDoubleOrNull() == null && it.third.text.toDoubleOrNull() == null) {
-                Toast.makeText("Пустые поля. Проверьте правильность введенных напряжений, времени проверки и скорости").show(Toast.ToastType.ERROR)
-             } else if (radioResonance.isSelected && it.first.text.toDoubleOrNull()!! > 43.0) {
-                Toast.makeText("Сохранить не удалось. Напряжение в этом опыте не может быть больше 43кВ. Измените данные для продолжения").show(Toast.ToastType.ERROR)
+                it.first.text.toDoubleOrNull() == null && it.second.text.toDoubleOrNull() == null && it.third.text.toDoubleOrNull() == null
+            ) {
+                allOk = false
+                Toast.makeText("Пустые поля. Проверьте правильность введенных напряжений, времени проверки и скорости")
+                    .show(Toast.ToastType.ERROR)
+            } else if (radioResonance.isSelected && it.first.text.toDoubleOrNull()!! > 43.0) {
+                allOk = false
+                Toast.makeText("Сохранить не удалось. Напряжение в этом опыте не может быть больше 43кВ. Измените данные для продолжения")
+                    .show(Toast.ToastType.ERROR)
             } else if (radioViu.isSelected && it.first.text.toDoubleOrNull()!! > 66.0) {
-                Toast.makeText("Сохранить не удалось. Напряжение в этом опыте не может быть больше 60кВ. Измените данные для продолжения").show(Toast.ToastType.ERROR)
+                allOk = false
+                Toast.makeText("Сохранить не удалось. Напряжение в этом опыте не может быть больше 60кВ. Измените данные для продолжения")
+                    .show(Toast.ToastType.ERROR)
+            } else if (radioViuDC.isSelected && it.first.text.toDoubleOrNull()!! > 80.0) {
+                allOk = false
+                Toast.makeText("Сохранить не удалось. Напряжение в этом опыте не может быть больше 80кВ. Измените данные для продолжения")
+                    .show(Toast.ToastType.ERROR)
             } else if (it.third.text.toDoubleOrNull()!! > 2.0) {
+                allOk = false
                 Toast.makeText("Сохранить не удалось. Скорость не должна быть больше 2кВ/с").show(Toast.ToastType.ERROR)
             } else {
                 voltages.add(it.first.text.toDouble())
@@ -226,6 +256,9 @@ class MainViewController : Statable {
             }
         }
         TestItemRepository.updateTestItem(currentTestItem)
+        if (allOk) {
+            Toast.makeText("Сделаны изменения").show(Toast.ToastType.CONFIRM)
+        }
     }
 
     @FXML
@@ -291,7 +324,6 @@ class MainViewController : Statable {
     private fun changeValuesInDB() {
         saveTestItemPoints()
         createLoadDiagram()
-        Toast.makeText("Сделаны изменения").show(Toast.ToastType.CONFIRM)
     }
 
     @FXML
@@ -363,7 +395,12 @@ class MainViewController : Statable {
                         desperateDot += currentTestItem.timesResonance[i]
                         seriesTimesAndVoltage.data.add(XYChart.Data(desperateDot, currentTestItem.voltageResonance[i]))
                     }
-                    seriesTimesAndVoltage.data.add(XYChart.Data(desperateDot + currentTestItem.voltageResonance.last() / 2, 0))
+                    seriesTimesAndVoltage.data.add(
+                        XYChart.Data(
+                            desperateDot + currentTestItem.voltageResonance.last() / 2,
+                            0
+                        )
+                    )
                 }
             }
             radioViu.isSelected -> {
@@ -379,7 +416,12 @@ class MainViewController : Statable {
                         desperateDot += currentTestItem.timesViu[i]
                         seriesTimesAndVoltage.data.add(XYChart.Data(desperateDot, currentTestItem.voltageViu[i]))
                     }
-                    seriesTimesAndVoltage.data.add(XYChart.Data(desperateDot + currentTestItem.voltageViu.last() / 2, 0))
+                    seriesTimesAndVoltage.data.add(
+                        XYChart.Data(
+                            desperateDot + currentTestItem.voltageViu.last() / 2,
+                            0
+                        )
+                    )
                 }
             }
             radioViuDC.isSelected -> {
@@ -395,7 +437,12 @@ class MainViewController : Statable {
                         desperateDot += currentTestItem.timesViuDC[i]
                         seriesTimesAndVoltage.data.add(XYChart.Data(desperateDot, currentTestItem.voltageViuDC[i]))
                     }
-                    seriesTimesAndVoltage.data.add(XYChart.Data(desperateDot + currentTestItem.voltageViuDC.last() / 2, 0))
+                    seriesTimesAndVoltage.data.add(
+                        XYChart.Data(
+                            desperateDot + currentTestItem.voltageViuDC.last() / 2,
+                            0
+                        )
+                    )
                 }
             }
         }
@@ -542,7 +589,8 @@ class MainViewController : Statable {
     private fun importDBFromFile(file: File) {
         try {
             Utils.copyFileFromFile(file, File(DataBaseRepository.DATABASE_NAME))
-            Toast.makeText(String.format("База успешно импортирована из файла %s", file.absolutePath)).show(Toast.ToastType.INFORMATION)
+            Toast.makeText(String.format("База успешно импортирована из файла %s", file.absolutePath))
+                .show(Toast.ToastType.INFORMATION)
         } catch (e: IOException) {
             Toast.makeText("Ошибка при импорте базы данных").show(Toast.ToastType.ERROR)
         }
@@ -563,7 +611,8 @@ class MainViewController : Statable {
     private fun exportDBToFile(file: File) {
         try {
             Utils.copyFileFromFile(File(DataBaseRepository.DATABASE_NAME), file)
-            Toast.makeText(String.format("База успешно экспортирована в файл %s", file.absolutePath)).show(Toast.ToastType.INFORMATION)
+            Toast.makeText(String.format("База успешно экспортирована в файл %s", file.absolutePath))
+                .show(Toast.ToastType.INFORMATION)
         } catch (e: IOException) {
             Toast.makeText("Ошибка при экспорте базы данных").show(Toast.ToastType.ERROR)
         }
